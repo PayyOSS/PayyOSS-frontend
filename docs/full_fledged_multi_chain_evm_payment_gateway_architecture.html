@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full-Fledged Multi-Chain EVM Crypto Payment Gateway Architecture</title>
+  <style>
+    :root {
+      --bg:#0b1020; --panel:#121a31; --panel2:#17213d; --text:#e8ecf8;
+      --muted:#a8b3cf; --accent:#5b8cff; --green:#4ade80;
+      --yellow:#facc15; --red:#fb7185; --border:#263452; --code:#070b15;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.6; background:var(--bg); color:var(--text);
+    }
+    header {
+      padding:64px 24px 40px;
+      background:radial-gradient(circle at top left,rgba(91,140,255,.35),transparent 35%),
+                 linear-gradient(135deg,#0b1020,#111936);
+      border-bottom:1px solid var(--border);
+    }
+    .container { max-width:1220px; margin:0 auto; padding:24px; }
+    h1 { font-size:clamp(2rem,5vw,4rem); line-height:1.05; margin:0 0 16px; }
+    h2 { margin-top:56px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+    h3 { margin-top:32px; }
+    h4 { margin-top:24px; color:#fff; }
+    p,li,td { color:var(--muted); }
+    strong,th { color:var(--text); }
+    a { color:var(--accent); }
+    .subtitle { max-width:950px; color:var(--muted); font-size:1.1rem; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+    .card {
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+      border:1px solid var(--border); border-radius:16px; padding:18px;
+    }
+    .badge {
+      display:inline-block; padding:5px 10px; border-radius:999px;
+      border:1px solid var(--border); color:var(--muted);
+      background:rgba(255,255,255,.05); margin:0 8px 8px 0; font-size:.9rem;
+    }
+    .ok { color:var(--green); } .warn { color:var(--yellow); } .danger { color:var(--red); }
+    pre {
+      background:var(--code); border:1px solid var(--border); border-radius:14px;
+      padding:16px; overflow-x:auto; color:#dfe7ff;
+    }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:.92rem; }
+    table {
+      width:100%; border-collapse:collapse; margin:16px 0; background:var(--panel);
+      border:1px solid var(--border); border-radius:12px; overflow:hidden;
+    }
+    th,td { border-bottom:1px solid var(--border); padding:12px; text-align:left; vertical-align:top; }
+    th { background:rgba(255,255,255,.04); }
+    .flow {
+      white-space:pre-wrap; background:#0a0f1f; border:1px solid var(--border);
+      border-radius:14px; padding:18px; color:#dfe7ff;
+    }
+    .toc { display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:10px; margin-top:24px; }
+    .toc a {
+      display:block; padding:12px; background:rgba(255,255,255,.04);
+      border:1px solid var(--border); border-radius:12px; text-decoration:none;
+    }
+    footer { border-top:1px solid var(--border); margin-top:56px; padding:24px; color:var(--muted); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <span class="badge">Ethereum</span>
+    <span class="badge">BNB Chain</span>
+    <span class="badge">Base</span>
+    <span class="badge">Polygon</span>
+    <span class="badge">Arbitrum</span>
+    <span class="badge">Native + ERC20</span>
+    <span class="badge">Full-Fledged System</span>
+    <h1>Full-Fledged Multi-Chain EVM Crypto Payment Gateway</h1>
+    <p class="subtitle">
+      Complete MVP-to-production architecture for a Stripe/Razorpay-like crypto payment platform supporting
+      native tokens and merchant-selected ERC20 tokens on Ethereum, BNB Chain, Base, Polygon, and Arbitrum.
+      Includes frontend, backend, smart contracts, indexers, APIs, SDKs, refunds, subscriptions, risk,
+      reconciliation, admin tools, observability, and scaling.
+    </p>
+  </div>
+</header>
+
+<main class="container">
+  <section>
+    <h2>Table of Contents</h2>
+    <div class="toc">
+      <a href="#overview">1. Product Overview</a>
+      <a href="#chains">2. Supported Chains & Assets</a>
+      <a href="#system">3. Full System Architecture</a>
+      <a href="#mvp">4. MVP Architecture</a>
+      <a href="#frontend">5. Frontend Architecture</a>
+      <a href="#backend">6. Backend Architecture</a>
+      <a href="#contracts">7. Smart Contracts</a>
+      <a href="#database">8. Database Schema</a>
+      <a href="#indexer">9. Multi-Chain Indexers</a>
+      <a href="#webhooks">10. Webhooks</a>
+      <a href="#sdk">11. SDKs & Developer Platform</a>
+      <a href="#risk">12. Risk, Compliance & Ops</a>
+      <a href="#settlement">13. Settlement & Reconciliation</a>
+      <a href="#observability">14. Observability</a>
+      <a href="#devops">15. DevOps & Deployment</a>
+      <a href="#roadmap">16. Roadmap</a>
+    </div>
+  </section>
+
+  <section id="overview">
+    <h2>1. Product Overview</h2>
+    <p>
+      The platform lets merchants accept crypto payments using hosted checkout, payment links, APIs, and SDKs.
+      Merchants can accept native tokens such as ETH, BNB, and MATIC/POL, or ERC20-compatible tokens by providing
+      token addresses. The platform tracks payments on-chain, verifies them, sends webhooks, and provides dashboards,
+      reporting, refunds, subscriptions, and enterprise operations.
+    </p>
+
+    <div class="grid">
+      <div class="card"><h3>Merchant Product</h3><p>Dashboard, payment links, hosted checkout, API keys, webhooks, assets, wallets, reports, refunds.</p></div>
+      <div class="card"><h3>Developer Product</h3><p>REST API, Node SDK, React SDK, webhook verifier, test mode, testnet contracts, docs.</p></div>
+      <div class="card"><h3>Payment Rails</h3><p>Native and ERC20 payments on Ethereum, BNB Chain, Base, Polygon, and Arbitrum.</p></div>
+      <div class="card"><h3>Business Model</h3><p>Transaction fee, subscription SaaS plans, premium analytics, enterprise support, settlement/reporting fees.</p></div>
+    </div>
+  </section>
+
+  <section id="chains">
+    <h2>2. Supported Chains & Assets</h2>
+    <table>
+      <tr><th>Chain</th><th>Chain ID</th><th>Native Token</th><th>Payment Types</th><th>Suggested Confirmations</th></tr>
+      <tr><td>Ethereum</td><td><code>1</code></td><td>ETH</td><td>ETH + ERC20</td><td>12</td></tr>
+      <tr><td>BNB Smart Chain</td><td><code>56</code></td><td>BNB</td><td>BNB + BEP20/ERC20-compatible</td><td>15</td></tr>
+      <tr><td>Base</td><td><code>8453</code></td><td>ETH</td><td>ETH + ERC20</td><td>3</td></tr>
+      <tr><td>Polygon PoS</td><td><code>137</code></td><td>MATIC/POL</td><td>MATIC/POL + ERC20</td><td>64</td></tr>
+      <tr><td>Arbitrum One</td><td><code>42161</code></td><td>ETH</td><td>ETH + ERC20</td><td>5</td></tr>
+    </table>
+
+    <h3>Asset Model</h3>
+    <pre><code>assetType = "NATIVE" | "ERC20"
+
+NATIVE:
+- tokenAddress = 0x0000000000000000000000000000000000000000
+- decimals = 18
+- symbol = chain native symbol
+- payment method = payNative()
+- transfer source = msg.value
+
+ERC20:
+- tokenAddress = merchant-provided token contract address
+- decimals = read from token contract
+- symbol/name = read from token contract
+- payment method = approve() + payToken()
+- transfer source = transferFrom()</code></pre>
+  </section>
+
+  <section id="system">
+    <h2>3. Full System Architecture</h2>
+    <div class="flow">User Interfaces
+  ├─ Marketing Website
+  ├─ Merchant Dashboard
+  ├─ Hosted Checkout
+  ├─ Developer Docs
+  ├─ Admin Console
+  └─ Support Console
+
+Public Interfaces
+  ├─ REST API
+  ├─ Node.js SDK
+  ├─ React Checkout SDK
+  ├─ Webhook Delivery
+  ├─ Payment Links
+  └─ Hosted Invoice Pages
+
+API Gateway Layer
+  ├─ Auth Middleware
+  ├─ API Key Middleware
+  ├─ Rate Limiting
+  ├─ Request Validation
+  ├─ Idempotency
+  └─ Audit Logging
+
+Core Backend Services
+  ├─ Auth Service
+  ├─ Merchant Service
+  ├─ Asset Service
+  ├─ Wallet Service
+  ├─ Payment Intent Service
+  ├─ Checkout Session Service
+  ├─ Payment Link Service
+  ├─ Invoice Service
+  ├─ Refund Service
+  ├─ Subscription Service
+  ├─ Webhook Service
+  ├─ Risk Service
+  ├─ Reconciliation Service
+  ├─ Reporting Service
+  ├─ Notification Service
+  └─ Admin/Ops Service
+
+Blockchain Services
+  ├─ Chain Config Service
+  ├─ RPC Manager
+  ├─ Transaction Verifier
+  ├─ Ethereum Indexer
+  ├─ BNB Chain Indexer
+  ├─ Base Indexer
+  ├─ Polygon Indexer
+  └─ Arbitrum Indexer
+
+Smart Contracts
+  ├─ PaymentRouter on Ethereum
+  ├─ PaymentRouter on BNB Chain
+  ├─ PaymentRouter on Base
+  ├─ PaymentRouter on Polygon
+  └─ PaymentRouter on Arbitrum
+
+Data & Infrastructure
+  ├─ PostgreSQL Primary
+  ├─ PostgreSQL Read Replicas
+  ├─ Redis
+  ├─ BullMQ / Queue Workers
+  ├─ Object Storage
+  ├─ Secrets Manager
+  ├─ Logs / Metrics / Traces
+  └─ Backups / Disaster Recovery</div>
+
+    <h3>High-Level Payment Flow</h3>
+    <div class="flow">1. Merchant creates payment through dashboard/API/SDK.
+2. Backend validates chain, asset, wallet, amount, expiry, and merchant permissions.
+3. Backend creates immutable payment record and returns checkout URL.
+4. Customer opens checkout and connects wallet.
+5. Checkout switches wallet to correct chain.
+6. If ERC20: customer approves token and calls payToken().
+7. If Native: customer calls payNative() with msg.value.
+8. PaymentRouter forwards funds directly to merchant minus fee.
+9. PaymentRouter emits PaymentReceived event.
+10. Chain indexer reads event after required confirmations.
+11. Backend verifies event exactly against payment record.
+12. Payment status becomes confirmed.
+13. Webhook is signed and delivered to merchant.
+14. Dashboard, reports, and analytics update.</div>
+  </section>
+
+  <section id="mvp">
+    <h2>4. MVP Architecture</h2>
+    <p>
+      The MVP should prove that merchants can create payments and receive reliable on-chain confirmations.
+      Avoid fiat settlement, advanced compliance, and subscriptions in the first release.
+    </p>
+
+    <h3>MVP Scope</h3>
+    <table>
+      <tr><th>Feature</th><th>Status</th><th>Notes</th></tr>
+      <tr><td>Merchant signup/login</td><td class="ok">MVP</td><td>Email/password or OAuth.</td></tr>
+      <tr><td>Merchant wallets</td><td class="ok">MVP</td><td>One or more wallets per chain.</td></tr>
+      <tr><td>Native token payments</td><td class="ok">MVP</td><td>ETH, BNB, MATIC/POL depending on chain.</td></tr>
+      <tr><td>ERC20 token payments</td><td class="ok">MVP</td><td>Merchant-provided token address after validation.</td></tr>
+      <tr><td>Payment links</td><td class="ok">MVP</td><td>Hosted checkout URL.</td></tr>
+      <tr><td>Payment API</td><td class="ok">MVP</td><td>Create/list/read payments.</td></tr>
+      <tr><td>Webhooks</td><td class="ok">MVP</td><td>Signed delivery with retries.</td></tr>
+      <tr><td>Refunds</td><td class="warn">Phase 2</td><td>Manual first, then assisted.</td></tr>
+      <tr><td>Subscriptions</td><td class="warn">Phase 2</td><td>Recurring invoices/payment intents.</td></tr>
+      <tr><td>Fiat settlement</td><td class="danger">Later</td><td>Requires partners/compliance.</td></tr>
+    </table>
+  </section>
+
+  <section id="frontend">
+    <h2>5. Frontend Architecture</h2>
+
+    <h3>Applications</h3>
+    <table>
+      <tr><th>App</th><th>Routes</th><th>Purpose</th></tr>
+      <tr><td>Marketing</td><td><code>/</code>, <code>/pricing</code>, <code>/features</code></td><td>Landing, acquisition, docs CTA.</td></tr>
+      <tr><td>Merchant Dashboard</td><td><code>/dashboard/*</code></td><td>Payments, wallets, assets, webhooks, reports, settings.</td></tr>
+      <tr><td>Hosted Checkout</td><td><code>/checkout/:id</code></td><td>Customer payment UI.</td></tr>
+      <tr><td>Developer Docs</td><td><code>/docs/*</code></td><td>API reference, SDKs, examples.</td></tr>
+      <tr><td>Admin Console</td><td><code>/admin/*</code></td><td>Internal merchant, token, risk, and payment operations.</td></tr>
+    </table>
+
+    <h3>Dashboard Modules</h3>
+    <pre><code>/dashboard
+/dashboard/payments
+/dashboard/payment-links
+/dashboard/invoices
+/dashboard/subscriptions
+/dashboard/refunds
+/dashboard/wallets
+/dashboard/assets
+/dashboard/chains
+/dashboard/api-keys
+/dashboard/webhooks
+/dashboard/events
+/dashboard/reports
+/dashboard/team
+/dashboard/settings
+/dashboard/developers</code></pre>
+
+    <h3>Checkout UX Rules</h3>
+    <ul>
+      <li>Show chain, asset type, symbol, amount, merchant name, expiry, and fee warning if applicable.</li>
+      <li>For ERC20, show token address and verification status.</li>
+      <li>For native, show that gas and payment asset are the same token.</li>
+      <li>Force wallet network switch to the payment chain ID.</li>
+      <li>ERC20 flow: approve then payToken.</li>
+      <li>Native flow: payNative with msg.value.</li>
+      <li>Poll backend until confirmed, expired, or failed.</li>
+    </ul>
+  </section>
+
+  <section id="backend">
+    <h2>6. Backend Architecture</h2>
+
+    <h3>Services</h3>
+    <table>
+      <tr><th>Service</th><th>Responsibility</th></tr>
+      <tr><td>Auth Service</td><td>Users, sessions, OAuth, MFA, roles.</td></tr>
+      <tr><td>Merchant Service</td><td>Merchant profiles, onboarding, team members, settings.</td></tr>
+      <tr><td>Wallet Service</td><td>Settlement wallets by chain and ownership verification.</td></tr>
+      <tr><td>Asset Service</td><td>Native/ERC20 asset validation, metadata, registry, risk status.</td></tr>
+      <tr><td>Payment Intent Service</td><td>Immutable payment objects and idempotent creation.</td></tr>
+      <tr><td>Checkout Session Service</td><td>Hosted checkout configuration and customer-facing status.</td></tr>
+      <tr><td>Payment Link Service</td><td>Reusable and one-time payment links.</td></tr>
+      <tr><td>Invoice Service</td><td>Invoice creation, due dates, hosted invoice pages, reminders.</td></tr>
+      <tr><td>Refund Service</td><td>Refund records, merchant-assisted refunds, refund webhooks.</td></tr>
+      <tr><td>Subscription Service</td><td>Recurring invoices, billing cycles, failed payment handling.</td></tr>
+      <tr><td>Webhook Service</td><td>Event signing, delivery, retry, replay protection.</td></tr>
+      <tr><td>Risk Service</td><td>Limits, denylist, velocity checks, suspicious token/wallet flags.</td></tr>
+      <tr><td>Reconciliation Service</td><td>DB vs chain checks, missing event detection, daily reports.</td></tr>
+      <tr><td>Reporting Service</td><td>Volume, fees, refunds, chain/token analytics.</td></tr>
+      <tr><td>Notification Service</td><td>Email, Slack, Telegram, Discord, in-app alerts.</td></tr>
+    </table>
+
+    <h3>Core API Surface</h3>
+    <pre><code>Auth:
+POST   /v1/auth/register
+POST   /v1/auth/login
+POST   /v1/auth/logout
+GET    /v1/me
+
+Chains & Assets:
+GET    /v1/chains
+GET    /v1/chains/:chainId
+POST   /v1/merchant-assets/validate
+POST   /v1/merchant-assets
+GET    /v1/merchant-assets
+PATCH  /v1/merchant-assets/:id
+DELETE /v1/merchant-assets/:id
+
+Wallets:
+POST   /v1/merchant-wallets
+GET    /v1/merchant-wallets
+PATCH  /v1/merchant-wallets/:id
+DELETE /v1/merchant-wallets/:id
+
+Payments:
+POST   /v1/payments
+GET    /v1/payments
+GET    /v1/payments/:id
+POST   /v1/payments/:id/cancel
+
+Checkout:
+POST   /v1/checkout/sessions
+GET    /v1/public/checkout/:id
+GET    /v1/public/payments/:id/status
+
+Payment Links:
+POST   /v1/payment-links
+GET    /v1/payment-links
+PATCH  /v1/payment-links/:id
+DELETE /v1/payment-links/:id
+
+Invoices:
+POST   /v1/invoices
+GET    /v1/invoices
+POST   /v1/invoices/:id/send
+POST   /v1/invoices/:id/void
+
+Refunds:
+POST   /v1/refunds
+GET    /v1/refunds
+GET    /v1/refunds/:id
+
+Subscriptions:
+POST   /v1/subscriptions
+GET    /v1/subscriptions
+PATCH  /v1/subscriptions/:id
+POST   /v1/subscriptions/:id/cancel
+
+Webhooks:
+POST   /v1/webhooks
+GET    /v1/webhooks
+PATCH  /v1/webhooks/:id
+POST   /v1/webhooks/:id/test
+
+Developer:
+POST   /v1/api-keys
+GET    /v1/api-keys
+DELETE /v1/api-keys/:id</code></pre>
+  </section>
+
+  <section id="contracts">
+    <h2>7. Smart Contracts</h2>
+
+    <h3>Deployment Strategy</h3>
+    <p>
+      Deploy one PaymentRouter per chain. Keep the same ABI across all chains. Use a multisig as owner in production.
+      The contract should not custody funds long-term; it forwards funds immediately to the merchant and fee recipient.
+    </p>
+
+    <h3>PaymentRouter.sol</h3>
+    <pre><code>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+contract PaymentRouter is Ownable2Step, Pausable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
+    uint256 public constant BPS_DENOMINATOR = 10_000;
+    uint256 public constant MAX_FEE_BPS = 300;
+    address public constant NATIVE_TOKEN = address(0);
+
+    address public feeRecipient;
+    uint256 public feeBps;
+    mapping(bytes32 => bool) public usedOrders;
+
+    event PaymentReceived(
+        bytes32 indexed merchantId,
+        bytes32 indexed orderId,
+        address indexed payer,
+        address token,
+        address merchant,
+        uint256 grossAmount,
+        uint256 feeAmount,
+        uint256 netAmount,
+        uint256 timestamp
+    );
+
+    event FeeUpdated(uint256 oldFeeBps, uint256 newFeeBps);
+    event FeeRecipientUpdated(address indexed oldRecipient, address indexed newRecipient);
+
+    error InvalidAmount();
+    error InvalidMerchant();
+    error InvalidFeeRecipient();
+    error FeeTooHigh();
+    error OrderAlreadyUsed();
+    error NativeTransferFailed();
+
+    constructor(address initialOwner, address _feeRecipient, uint256 _feeBps)
+        Ownable(initialOwner)
+    {
+        if (_feeRecipient == address(0)) revert InvalidFeeRecipient();
+        if (_feeBps > MAX_FEE_BPS) revert FeeTooHigh();
+        feeRecipient = _feeRecipient;
+        feeBps = _feeBps;
+    }
+
+    function setFeeRecipient(address newRecipient) external onlyOwner {
+        if (newRecipient == address(0)) revert InvalidFeeRecipient();
+        address oldRecipient = feeRecipient;
+        feeRecipient = newRecipient;
+        emit FeeRecipientUpdated(oldRecipient, newRecipient);
+    }
+
+    function setFeeBps(uint256 newFeeBps) external onlyOwner {
+        if (newFeeBps > MAX_FEE_BPS) revert FeeTooHigh();
+        uint256 oldFeeBps = feeBps;
+        feeBps = newFeeBps;
+        emit FeeUpdated(oldFeeBps, newFeeBps);
+    }
+
+    function pause() external onlyOwner { _pause(); }
+    function unpause() external onlyOwner { _unpause(); }
+
+    function payNative(
+        bytes32 merchantId,
+        bytes32 orderId,
+        address payable merchant
+    ) external payable nonReentrant whenNotPaused {
+        if (merchant == address(0)) revert InvalidMerchant();
+        if (msg.value == 0) revert InvalidAmount();
+        if (usedOrders[orderId]) revert OrderAlreadyUsed();
+
+        usedOrders[orderId] = true;
+
+        uint256 feeAmount = (msg.value * feeBps) / BPS_DENOMINATOR;
+        uint256 netAmount = msg.value - feeAmount;
+
+        (bool merchantOk, ) = merchant.call{value: netAmount}("");
+        if (!merchantOk) revert NativeTransferFailed();
+
+        if (feeAmount > 0) {
+            (bool feeOk, ) = payable(feeRecipient).call{value: feeAmount}("");
+            if (!feeOk) revert NativeTransferFailed();
+        }
+
+        emit PaymentReceived(
+            merchantId,
+            orderId,
+            msg.sender,
+            NATIVE_TOKEN,
+            merchant,
+            msg.value,
+            feeAmount,
+            netAmount,
+            block.timestamp
+        );
+    }
+
+    function payToken(
+        bytes32 merchantId,
+        bytes32 orderId,
+        address token,
+        address merchant,
+        uint256 amount
+    ) external nonReentrant whenNotPaused {
+        if (merchant == address(0)) revert InvalidMerchant();
+        if (amount == 0) revert InvalidAmount();
+        if (usedOrders[orderId]) revert OrderAlreadyUsed();
+
+        usedOrders[orderId] = true;
+
+        uint256 feeAmount = (amount * feeBps) / BPS_DENOMINATOR;
+        uint256 netAmount = amount - feeAmount;
+
+        IERC20(token).safeTransferFrom(msg.sender, merchant, netAmount);
+
+        if (feeAmount > 0) {
+            IERC20(token).safeTransferFrom(msg.sender, feeRecipient, feeAmount);
+        }
+
+        emit PaymentReceived(
+            merchantId,
+            orderId,
+            msg.sender,
+            token,
+            merchant,
+            amount,
+            feeAmount,
+            netAmount,
+            block.timestamp
+        );
+    }
+}</code></pre>
+
+    <h3>Future Contract Modules</h3>
+    <table>
+      <tr><th>Contract</th><th>Use</th><th>When</th></tr>
+      <tr><td>RefundRegistry</td><td>Emit standardized refund events.</td><td>Phase 2</td></tr>
+      <tr><td>MerchantRegistry</td><td>Optional verified merchant registry.</td><td>Enterprise</td></tr>
+      <tr><td>EscrowRouter</td><td>Escrow-based payments for marketplaces.</td><td>Later</td></tr>
+      <tr><td>SubscriptionVault</td><td>Pre-approved pull payments or allowance-based recurring payments.</td><td>Later; high-risk UX/security</td></tr>
+    </table>
+  </section>
+
+  <section id="database">
+    <h2>8. Database Schema</h2>
+    <pre><code>chains(chain_id, name, native_symbol, native_decimals, router_address, confirmations, rpc_secret_ref, fallback_rpc_secret_ref, enabled)
+
+merchants(id, name, email, status, business_type, created_at, updated_at)
+
+merchant_users(id, merchant_id, user_id, role, status)
+
+merchant_wallets(id, merchant_id, chain_id, wallet_address, label, is_default, verification_status)
+
+merchant_assets(id, merchant_id, chain_id, asset_type, token_address, token_name, token_symbol, token_decimals, settlement_wallet_id, status, is_verified, risk_level)
+
+api_keys(id, merchant_id, key_prefix, key_hash, environment, scopes, last_used_at, revoked_at)
+
+payment_intents(id, merchant_id, amount, amount_raw, chain_id, asset_type, token_address, token_symbol, token_decimals, status, expires_at, metadata)
+
+checkout_sessions(id, payment_intent_id, success_url, cancel_url, customer_email, status)
+
+payment_links(id, merchant_id, title, amount, chain_id, asset_type, token_address, active, reusable)
+
+payments(id, payment_intent_id, merchant_id, merchant_order_id, internal_order_hash, chain_id, router_address, merchant_wallet, payer_wallet, tx_hash, status, confirmed_at)
+
+payment_events(id, payment_id, chain_id, event_type, tx_hash, block_number, log_index, payload)
+
+refunds(id, payment_id, merchant_id, amount, amount_raw, status, reason, tx_hash)
+
+subscriptions(id, merchant_id, customer_id, amount, chain_id, asset_type, token_address, interval, status, current_period_start, current_period_end)
+
+invoices(id, merchant_id, customer_id, subscription_id, amount, status, due_at, hosted_url)
+
+webhook_endpoints(id, merchant_id, url, secret_hash, enabled)
+
+webhook_deliveries(id, merchant_id, endpoint_id, event_type, payload, status, attempt_count, next_retry_at)
+
+indexer_checkpoints(id, chain_id, contract_address, last_processed_block)
+
+audit_logs(id, merchant_id, actor_id, action, resource_type, resource_id, ip, user_agent, payload)
+
+risk_reviews(id, merchant_id, payment_id, asset_id, review_type, status, reason)
+
+settlement_reports(id, merchant_id, chain_id, asset_type, token_address, period_start, period_end, gross_volume, fees, refunds, net_volume)</code></pre>
+  </section>
+
+  <section id="indexer">
+    <h2>9. Multi-Chain Indexers</h2>
+    <div class="flow">Indexer Manager
+  ├─ Ethereum Indexer     chainId=1
+  ├─ BNB Chain Indexer    chainId=56
+  ├─ Base Indexer         chainId=8453
+  ├─ Polygon Indexer      chainId=137
+  └─ Arbitrum Indexer     chainId=42161
+
+Each indexer:
+  - uses primary + fallback RPC
+  - reads PaymentReceived logs
+  - waits chain-specific confirmations
+  - stores tx_hash + log_index idempotently
+  - validates chainId, orderId, token, merchant, amount
+  - marks payment confirmed or manual_review
+  - enqueues webhooks and reporting events</div>
+
+    <h3>Verification Rule</h3>
+    <pre><code>valid =
+  payment.chainId === event.chainId &&
+  payment.internalOrderHash === event.orderId &&
+  payment.tokenAddress.toLowerCase() === event.token.toLowerCase() &&
+  payment.merchantWallet.toLowerCase() === event.merchant.toLowerCase() &&
+  payment.amountRaw === event.grossAmount.toString()
+
+NATIVE token address:
+0x0000000000000000000000000000000000000000</code></pre>
+  </section>
+
+  <section id="webhooks">
+    <h2>10. Webhooks</h2>
+    <h3>Events</h3>
+    <pre><code>payment.created
+payment.submitted
+payment.detected
+payment.confirmed
+payment.expired
+payment.failed
+payment.manual_review
+refund.created
+refund.confirmed
+invoice.created
+invoice.paid
+subscription.created
+subscription.renewed
+subscription.cancelled</code></pre>
+
+    <h3>Payload</h3>
+    <pre><code>{
+  "id": "evt_01HX...",
+  "type": "payment.confirmed",
+  "createdAt": "2026-06-10T18:00:00.000Z",
+  "data": {
+    "paymentId": "pay_01HX...",
+    "orderId": "ORDER_123",
+    "amount": "0.01",
+    "amountRaw": "10000000000000000",
+    "chainId": 1,
+    "chainName": "Ethereum",
+    "assetType": "NATIVE",
+    "tokenAddress": "0x0000000000000000000000000000000000000000",
+    "tokenSymbol": "ETH",
+    "txHash": "0xabc...",
+    "payer": "0x123...",
+    "status": "confirmed"
+  }
+}</code></pre>
+
+    <h3>Signature</h3>
+    <pre><code>X-Webhook-Id: evt_01HX...
+X-Webhook-Timestamp: 1718042400
+X-Webhook-Signature: hmac_sha256(timestamp + "." + raw_body, webhook_secret)</code></pre>
+  </section>
+
+  <section id="sdk">
+    <h2>11. SDKs & Developer Platform</h2>
+    <h3>SDKs</h3>
+    <table>
+      <tr><th>SDK</th><th>Purpose</th></tr>
+      <tr><td>Node.js SDK</td><td>Create payments, payment links, refunds, verify webhooks.</td></tr>
+      <tr><td>React SDK</td><td>Embed checkout button and payment status components.</td></tr>
+      <tr><td>Webhook Verifier</td><td>Small package for verifying webhook signatures.</td></tr>
+      <tr><td>CLI</td><td>Test webhooks, create test payments, inspect API keys.</td></tr>
+    </table>
+
+    <h3>Node SDK Example</h3>
+    <pre><code>const gateway = new CryptoGateway({ apiKey: process.env.API_KEY });
+
+const payment = await gateway.payments.create({
+  amount: "25.00",
+  chainId: 8453,
+  assetType: "ERC20",
+  tokenAddress: "0xTokenAddress",
+  orderId: "ORDER_123",
+  successUrl: "https://merchant.com/success",
+  cancelUrl: "https://merchant.com/cancel"
+});
+
+console.log(payment.checkoutUrl);</code></pre>
+  </section>
+
+  <section id="risk">
+    <h2>12. Risk, Compliance & Ops</h2>
+    <h3>Risk Controls</h3>
+    <ul>
+      <li>Token denylist and suspicious token detection.</li>
+      <li>Merchant daily/monthly volume limits.</li>
+      <li>Wallet risk scoring and blocked wallet list.</li>
+      <li>Velocity checks by payer, merchant, chain, and token.</li>
+      <li>Manual review state for mismatched or suspicious events.</li>
+      <li>Audit logs for all admin and merchant actions.</li>
+    </ul>
+
+    <h3>Operational Tools</h3>
+    <ul>
+      <li>Admin console for merchants, payments, tokens, chains, and risk reviews.</li>
+      <li>Support console for webhook retries and transaction investigation.</li>
+      <li>Manual payment status correction with dual approval.</li>
+      <li>Chain health dashboard with RPC/indexer lag.</li>
+    </ul>
+  </section>
+
+  <section id="settlement">
+    <h2>13. Settlement & Reconciliation</h2>
+    <p>
+      MVP settlement is direct-to-merchant wallet. Production settlement adds reporting, exports, and optional partner-based fiat/off-ramp flows.
+    </p>
+
+    <h3>Reconciliation Jobs</h3>
+    <div class="flow">Hourly:
+  - check pending payments against chain
+  - detect stuck webhooks
+  - retry failed deliveries
+
+Daily:
+  - compare payment_events with payments
+  - generate merchant volume reports
+  - generate fee reports
+  - flag mismatched records
+
+Monthly:
+  - merchant statements
+  - tax/accounting exports
+  - enterprise reports</div>
+
+    <h3>Reports</h3>
+    <ul>
+      <li>Gross volume by chain/token.</li>
+      <li>Net merchant volume after fees/refunds.</li>
+      <li>Platform fee revenue.</li>
+      <li>Refund volume.</li>
+      <li>Failed/expired payment rate.</li>
+    </ul>
+  </section>
+
+  <section id="observability">
+    <h2>14. Observability</h2>
+    <h3>Metrics</h3>
+    <ul>
+      <li>Payment confirmation time by chain.</li>
+      <li>Indexer lag by chain.</li>
+      <li>RPC failure rate by provider and chain.</li>
+      <li>Webhook delivery success rate.</li>
+      <li>Queue depth and retry count.</li>
+      <li>Manual review queue size.</li>
+      <li>Checkout conversion rate.</li>
+    </ul>
+
+    <h3>Alerts</h3>
+    <ul>
+      <li>Indexer behind by more than threshold blocks.</li>
+      <li>RPC provider failure spike.</li>
+      <li>Webhook failure spike.</li>
+      <li>Payment confirmations delayed.</li>
+      <li>Database error rate or slow queries.</li>
+      <li>Contract paused/unpaused event.</li>
+    </ul>
+  </section>
+
+  <section id="devops">
+    <h2>15. DevOps & Deployment</h2>
+
+    <h3>Environment Variables</h3>
+    <pre><code>DATABASE_URL=
+REDIS_URL=
+JWT_SECRET=
+API_KEY_PEPPER=
+WEBHOOK_SECRET_PEPPER=
+
+ETHEREUM_RPC_URL=
+ETHEREUM_FALLBACK_RPC_URL=
+BNB_RPC_URL=
+BNB_FALLBACK_RPC_URL=
+BASE_RPC_URL=
+BASE_FALLBACK_RPC_URL=
+POLYGON_RPC_URL=
+POLYGON_FALLBACK_RPC_URL=
+ARBITRUM_RPC_URL=
+ARBITRUM_FALLBACK_RPC_URL=
+
+ETHEREUM_ROUTER_ADDRESS=
+BNB_ROUTER_ADDRESS=
+BASE_ROUTER_ADDRESS=
+POLYGON_ROUTER_ADDRESS=
+ARBITRUM_ROUTER_ADDRESS=
+
+SENTRY_DSN=
+LOG_LEVEL=info</code></pre>
+
+    <h3>Deployment Targets</h3>
+    <table>
+      <tr><th>Component</th><th>MVP</th><th>Production</th></tr>
+      <tr><td>Frontend</td><td>Vercel</td><td>Vercel/Cloudflare Pages with WAF</td></tr>
+      <tr><td>API</td><td>Render/Fly/Railway</td><td>AWS ECS/EKS, GCP Cloud Run/GKE</td></tr>
+      <tr><td>Database</td><td>Neon/Supabase</td><td>RDS/Cloud SQL with replicas</td></tr>
+      <tr><td>Redis</td><td>Upstash</td><td>Managed Redis cluster</td></tr>
+      <tr><td>Workers</td><td>Single worker pool</td><td>Separate worker pools per queue/chain</td></tr>
+      <tr><td>Secrets</td><td>Platform env vars</td><td>AWS Secrets Manager / GCP Secret Manager</td></tr>
+    </table>
+  </section>
+
+  <section id="roadmap">
+    <h2>16. Roadmap</h2>
+
+    <h3>Phase 1: MVP</h3>
+    <ul>
+      <li>Native + ERC20 payments on five chains.</li>
+      <li>PaymentRouter deployment per chain.</li>
+      <li>Merchant dashboard, wallets, assets, payment links.</li>
+      <li>Hosted checkout.</li>
+      <li>Multi-chain indexers.</li>
+      <li>Signed webhooks.</li>
+    </ul>
+
+    <h3>Phase 2: Full-Fledged Platform</h3>
+    <ul>
+      <li>Payment intents and checkout sessions.</li>
+      <li>Developer docs, Node SDK, React SDK, webhook verifier.</li>
+      <li>Refund system.</li>
+      <li>Invoices and hosted invoice pages.</li>
+      <li>Subscriptions and recurring billing.</li>
+      <li>Merchant teams and roles.</li>
+      <li>Risk engine and manual review console.</li>
+      <li>Reconciliation reports.</li>
+      <li>Admin/support consoles.</li>
+      <li>Advanced observability and alerting.</li>
+    </ul>
+
+    <h3>Phase 3: Scale & Enterprise</h3>
+    <ul>
+      <li>Fiat/off-ramp partner integrations.</li>
+      <li>Token swap/auto-conversion.</li>
+      <li>Marketplace/escrow payments.</li>
+      <li>Enterprise approvals and audit exports.</li>
+      <li>More chains after risk review.</li>
+    </ul>
+
+    <h3>Recommended Build Order</h3>
+    <pre><code>1. PaymentRouter with payNative + payToken
+2. Foundry tests and testnet deployments
+3. Chain config service
+4. Merchant auth and dashboard
+5. Wallet and asset setup
+6. Payment creation API
+7. Hosted checkout
+8. Multi-chain indexers
+9. Webhooks
+10. Payment links
+11. SDK + docs
+12. Refunds
+13. Invoices
+14. Subscriptions
+15. Risk/admin console
+16. Reconciliation and reporting
+17. Production monitoring
+18. Mainnet scaling</code></pre>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>Full-fledged architecture document for a multi-chain EVM crypto payment gateway supporting native tokens and ERC20 tokens.</p>
+  </div>
+</footer>
+</body>
+</html>
