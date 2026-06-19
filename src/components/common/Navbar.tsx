@@ -1,13 +1,25 @@
-"use client"
+"use client";
+import { authClient } from "@/lib/auth-client";
+import { UserButton } from "@daveyplate/better-auth-ui";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useRouter } from "next/navigation";
 
-const navItems = ["Home", "Activity", "Manage", "Program", "Folders", "Documents"];
+const navItems = [
+  "Home",
+  "Activity",
+  "Manage",
+  "Program",
+  "Folders",
+  "Documents",
+];
 
 const navLink =
   "grid min-h-8 min-w-[76px] place-items-center rounded-full px-3.5 text-xs font-semibold text-white/60 transition hover:text-[#f5f5f0]";
 
 export function Navbar() {
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
 
   useGSAP(() => {
     gsap.from(".navbar", {
@@ -24,7 +36,7 @@ export function Navbar() {
       delay: 0.2,
       ease: "power2.out",
     });
-  },);
+  });
 
   return (
     <header
@@ -58,18 +70,23 @@ export function Navbar() {
       </nav>
 
       <div className="navbar inline-flex items-center justify-self-end gap-1">
-        <a
-          className="sm:grid min-h-8 place-items-center rounded-full px-4 text-lg font-semibold text-white/60 transition hover:text-[#f5f5f0] hidden"
-          href="#"
-        >
-          Log in
-        </a>
-        <a
-          className="grid min-h-8 place-items-center rounded-full bg-[#b8ff3c] px-4 text-[15px] font-semibold text-[#122004] transition hover:-translate-y-px"
-          href="#"
-        >
-          Sign up
-        </a>
+        {!session?.user ? (
+          <div
+            onClick={() => router.push("/auth/sign-in")}
+            className="relative group overflow-hidden hidden lg:block bg-[#85cb0d]/20 p-0.5 h-10 w-35 rounded-md active:scale-100 hover:scale-105 transition-all duration-300"
+          >
+            <button className="text-[#b8ff3c] cursor-pointer text-sm bg-linear-to-t from-black/50 to-black h-full w-full rounded transition-all">
+              Get started
+            </button>
+
+            <div className="absolute -bottom-12 group-hover:-bottom-10 transition-all duration-200 left-1/2 -z-10 -translate-x-1/2 blur size-14 rounded-full bg-[#85cb0d]"></div>
+          </div>
+        ) : (
+          <>
+            <button className="bg-white/10 mr-2 px-5 py-1.5 text-xs sm:text-sm border text-gray-200 rounded-full"></button>
+            <UserButton size={"icon"} />
+          </>
+        )}
       </div>
     </header>
   );
