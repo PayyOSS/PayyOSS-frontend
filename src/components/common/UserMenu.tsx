@@ -34,7 +34,7 @@ export function UserMenu({
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="size-9 rounded-full overflow-hidden border border-white/10"
+        className="size-9 rounded-full hover:size-10 transition-all cursor-pointer overflow-hidden border border-white/10"
       >
         <img
           src={image || "/default-avatar.png"}
@@ -49,7 +49,7 @@ export function UserMenu({
             onClick={async () => {
               await authClient.signOut();
             }}
-            className="w-full rounded-lg px-3 py-2 text-left text-sm text-red-400 hover:bg-white/10"
+            className="w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm text-red-400 hover:bg-white/10"
           >
             Logout
           </button>
