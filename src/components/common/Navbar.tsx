@@ -4,6 +4,7 @@ import { UserButton } from "@daveyplate/better-auth-ui";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useRouter } from "next/navigation";
+import { UserMenu } from "./UserMenu";
 
 const navItems = [
   "Home",
@@ -83,8 +84,7 @@ export function Navbar() {
           </div>
         ) : (
           <>
-            <button className="bg-white/10 mr-2 px-5 py-1.5 text-xs sm:text-sm border text-gray-200 rounded-full"></button>
-            <UserButton size={"icon"} />
+            <UserMenu image={session?.user?.image} name={session?.user?.name} />
           </>
         )}
       </div>

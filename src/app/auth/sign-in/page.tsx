@@ -18,7 +18,7 @@ export default function SignInPage() {
     </div>
 
     <AuthView
-  pathname="sign_in"
+  pathname="sign-in"
   classNames={{
     base: `
       bg-[#85cb0d]/10
