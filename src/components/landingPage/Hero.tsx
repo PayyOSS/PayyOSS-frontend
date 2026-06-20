@@ -49,7 +49,7 @@ export function Hero() {
             resources to achieve personal or organizational goals.
           </p>
 
-          <div className="mt-7.5 flex flex-wrap justify-center gap-3.5 max-md:mt-6 max-sm:mt-5 max-sm:gap-2.5">
+          {/* <div className="mt-7.5 flex flex-wrap justify-center gap-3.5 max-md:mt-6 max-sm:mt-5 max-sm:gap-2.5">
             <a
               className="grid min-h-11 min-w-33 place-items-center rounded-full bg-[#b8ff3c] text-[15px] font-extrabold text-[#121d03] shadow-[0_16px_40px_rgba(184,255,60,0.2)] transition hover:-translate-y-px max-sm:min-h-10 max-sm:min-w-28 max-sm:text-[13px]"
               href="#"
@@ -62,7 +62,7 @@ export function Hero() {
             >
               Get a Demo
             </a>
-          </div>
+          </div> */}
         </div>
 
         <DashboardPreview />

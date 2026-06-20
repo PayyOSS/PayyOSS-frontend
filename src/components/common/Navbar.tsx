@@ -56,7 +56,7 @@ export function Navbar() {
       </a>
 
       <nav
-        className="navmid md:inline-flex hidden items-center gap-1 rounded-full border-b border-white/10 p-1 pb-2 max-md:col-span-full max-md:row-start-2 max-md:max-w-full max-md:justify-self-center max-md:overflow-x-auto"
+        className="navmid md:inline-flex hidden mt-2 items-center gap-1 rounded-full border-b border-white/10 p-1 pb-2 max-md:col-span-full max-md:row-start-2 max-md:max-w-full max-md:justify-self-center max-md:overflow-x-auto"
         aria-label="Main navigation"
       >
         {navItems.map((item) => (
