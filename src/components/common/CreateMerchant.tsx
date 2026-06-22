@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Building2, Mail, Upload, Loader2 } from "lucide-react";
 import axios from "axios";
+import api from "@/config/axios";
+import { useMerchantStore } from "@/stores/useMerchantStore";
+import { useRouter } from "next/navigation";
 
 enum BusinessType {
   INDIVIDUAL = "INDIVIDUAL",
@@ -12,8 +15,10 @@ enum BusinessType {
 }
 
 export default function CreateMerchantForm() {
+  const router = useRouter();
   const [logo, setLogo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const setMerchant = useMerchantStore((state) => state.setMerchant);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -44,8 +49,8 @@ export default function CreateMerchantForm() {
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        "http://localhost:3001/merchant",
+      const { data } = await api.post(
+        "merchant/create",
         {
           name: formData.name,
           email: formData.email,
@@ -53,7 +58,19 @@ export default function CreateMerchantForm() {
         }
       );
 
-      console.log(response.data);
+      if(data?.success){
+        setMerchant({
+          id: data.merchant.id,
+          name: data.merchant.name,
+          imageUrl: data.merchant.imageUrl,
+          email: data.merchant.email,
+          environment: data.merchant.environment,
+          status: data.merchant.status,
+          businessType: data.merchant.businessType,
+        });
+        router.push(`/${data.merchant.id}/${data.merchant.environment.toLowerCase()}/dashboard`);
+        console.log(data);
+      }
     } catch (error) {
       console.error(error);
     } finally {

@@ -8,12 +8,8 @@ import { useParams, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Dashboard from "./Dashboard";
+import { useMerchantStore } from "@/stores/useMerchantStore";
 
-const navItems = [
-  { to: "/jalfgay48334tg473g3q4/test/dashboard", label: "Dashboard", Icon: LayoutDashboardIcon },
-  { to: "/jalfgay48334tg473g3q4/test/transaction", label: "Transaction", Icon: ArrowLeftRightIcon },
-  { to: "/jalfgay48334tg473g3q4/test/wallet", label: "Wallet", Icon: Wallet },
-];
 
 
 interface prop {
@@ -22,14 +18,19 @@ interface prop {
 }
 
 const Sidebar = ({ sidebar, setSidebar }: prop) => {
-
+  
+  
   const params = useParams();
   const pathname = usePathname();
+  const merchant = useMerchantStore((state) => state.merchant);
+  const basePath = `/${merchant?.id}/${merchant?.environment?.toLowerCase()}`;
+  
+  const navItems = [
+    { to: `${basePath}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
+    { to: `${basePath}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
+    { to: `${basePath}/wallet`, label: "Wallet", Icon: Wallet },
+  ];
 
-  // useEffect(() => {
-   
-  //   console.log(params.marchentId);
-  // }, [])
   
 
   return (
