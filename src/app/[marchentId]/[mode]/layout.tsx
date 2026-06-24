@@ -46,7 +46,7 @@ export default function Layout({
        <Sidebar sidebar={sidebar} setSidebar={setSidebar}/>
 
       {/* ONLY this changes with URL */}
-      <div className="flex-1 bg-gray-800">
+      <div className="flex-1 bg-[#151615]">
         {children}
       </div>
       </div>

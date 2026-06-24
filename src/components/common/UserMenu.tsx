@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import api from "@/config/axios";
 import { useMerchantStore } from "@/stores/useMerchantStore";
+import { useHydrated } from "@/hooks/useHydrated";
+
 
 export function UserMenu({
   image,
@@ -19,6 +21,9 @@ export function UserMenu({
   const menuRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const setMerchant = useMerchantStore((state) => state.setMerchant);
+
+  const hydrated = useHydrated();
+
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -65,6 +70,8 @@ export function UserMenu({
     console.log("error", error)
   }
 }
+
+if (!hydrated) return null; // or a skeleton
 
   return (
     <div className="relative inline-block" ref={menuRef}>
