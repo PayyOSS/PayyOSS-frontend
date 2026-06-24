@@ -1,6 +1,7 @@
 // import { useClerk, useUser, Protect } from '@clerk/clerk-react';
 import {
   ArrowLeftRightIcon,
+  Layers,
   LayoutDashboardIcon,
   Wallet,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
     { to: '/dashboard', label: "Dashboard", Icon: LayoutDashboardIcon },
     { to: '/transaction', label: "Transaction", Icon: ArrowLeftRightIcon },
     { to: '/wallet', label: "Wallet", Icon: Wallet },
+    { to: '/assets', label: "Assets", Icon: Layers },
   ];
 
   
@@ -51,7 +53,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 onClick={() => setSidebar(false)}
                 className={isActive
                       ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2"
-                      :"text-gray-500 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2"
+                      :"text-gray-500 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] bg-[#b8ff3c]/8 mt-2"
                 }
               >
                 <Icon className="w-5 h-5" />
