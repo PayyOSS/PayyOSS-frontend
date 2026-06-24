@@ -1,5 +1,5 @@
-// stores/useMerchantStore.ts
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export enum ApiEnvironment {
   TEST = "TEST",
@@ -28,13 +28,8 @@ export interface CreateMerchantDto {
 
 interface MerchantStore {
   merchant: CreateMerchantDto;
-
   setMerchant: (merchant: CreateMerchantDto) => void;
-
-  updateMerchant: (
-    data: Partial<CreateMerchantDto>
-  ) => void;
-
+  updateMerchant: (data: Partial<CreateMerchantDto>) => void;
   resetMerchant: () => void;
 }
 
@@ -48,22 +43,27 @@ const initialMerchantState: CreateMerchantDto = {
   businessType: BusinessType.INDIVIDUAL,
 };
 
-export const useMerchantStore = create<MerchantStore>((set) => ({
-  merchant: initialMerchantState,
-
-  setMerchant: (merchant) =>
-    set({ merchant }),
-
-  updateMerchant: (data) =>
-    set((state) => ({
-      merchant: {
-        ...state.merchant,
-        ...data,
-      },
-    })),
-
-  resetMerchant: () =>
-    set({
+export const useMerchantStore = create<MerchantStore>()(
+  persist(
+    (set) => ({
       merchant: initialMerchantState,
+
+      setMerchant: (merchant) => set({ merchant }),
+
+      updateMerchant: (data) =>
+        set((state) => ({
+          merchant: {
+            ...state.merchant,
+            ...data,
+          },
+        })),
+
+      resetMerchant: () => set({ merchant: initialMerchantState }),
     }),
-}));
+    {
+      name: "merchant-storage",          // localStorage key
+      storage: createJSONStorage(() => localStorage),
+      partialState: (state) => ({ merchant: state.merchant }), // only persist merchant, not actions
+    }
+  )
+);
