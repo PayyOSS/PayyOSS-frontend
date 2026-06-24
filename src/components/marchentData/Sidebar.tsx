@@ -26,9 +26,9 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
   const basePath = `/${merchant?.id}/${merchant?.environment?.toLowerCase()}`;
   
   const navItems = [
-    { to: `${basePath}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
-    { to: `${basePath}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
-    { to: `${basePath}/wallet`, label: "Wallet", Icon: Wallet },
+    { to: '/dashboard', label: "Dashboard", Icon: LayoutDashboardIcon },
+    { to: '/transaction', label: "Transaction", Icon: ArrowLeftRightIcon },
+    { to: '/wallet', label: "Wallet", Icon: Wallet },
   ];
 
   
@@ -46,7 +46,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
             const isActive = pathname.endsWith(to);
             return (
               <Link
-                href={to} ///{marchetId}/{mode}/{to}
+                href={`${basePath}/${to}`} ///{marchetId}/{mode}/{to}
                 key={to}
                 onClick={() => setSidebar(false)}
                 className={isActive
