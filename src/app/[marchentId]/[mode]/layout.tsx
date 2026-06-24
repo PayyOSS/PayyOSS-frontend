@@ -1,5 +1,7 @@
 "use client"
+import { UserMenu } from "@/components/common/UserMenu";
 import Sidebar from "@/components/marchentData/Sidebar";
+import { authClient } from "@/lib/auth-client";
 import { Menu, Shield, X } from "lucide-react";
 import { useState } from "react";
 
@@ -9,6 +11,7 @@ export default function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  const { data: session } = authClient.useSession();
 
     const [sidebar, setSidebar] = useState(false);
 
@@ -16,7 +19,7 @@ export default function Layout({
     <div className=" className='flex flex-col items-start justify-start h-screen fixed top-0 left-0 right-0 bottom-0'">
       {/* ALWAYS visible */}
 
-    <nav className='w-full py-5 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between border-b bg-black border-gray-700'>
+    <nav className='w-full py-5 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between bg-black'>
         <a href="/" className="flex items-center gap-2">
             <div className="relative">
               <span className="grid size-8.5 place-items-center rounded-full bg-[#b8ff3c] text-2xl font-black leading-none text-[#111804]">
@@ -36,9 +39,7 @@ export default function Layout({
             }
   
 
-          <span className="grid size-8.5 place-items-center rounded-full bg-blue-400 text-xl font-black leading-none text-[#111804]">
-            A
-          </span>
+          <UserMenu image={session?.user?.image} name={session?.user?.name} />
           </div>
       </nav>
 
@@ -46,7 +47,7 @@ export default function Layout({
        <Sidebar sidebar={sidebar} setSidebar={setSidebar}/>
 
       {/* ONLY this changes with URL */}
-      <div className="flex-1 bg-[#151615]">
+      <div className="flex-1 rounded-tl-0  sm:rounded-tl-3xl bg-[#151615]">
         {children}
       </div>
       </div>
