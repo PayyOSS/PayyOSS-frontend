@@ -36,16 +36,14 @@ export function UserMenu({
 
    const handleClick = async () => {
   try {
-    setIsLoading(true);
-    const { data } = await api.get("merchant/userId");
+    setIsLoading(true)
+    const { data } = await api.get("merchant/userId")
 
-    // no merchant found → go to create page
     if (!data.merchant || !data.merchant.id) {
-      router.push("/create_marchent");
-      return; // ← stop here, don't run the rest
+      router.push("/create_marchent")
+      return
     }
 
-    // merchant exists → store it and go to dashboard
     setMerchant({
       id: data.merchant.id,
       name: data.merchant.name,
@@ -54,21 +52,25 @@ export function UserMenu({
       environment: data.merchant.environment,
       status: data.merchant.status,
       businessType: data.merchant.businessType,
-    });
+    })
 
-    router.push(`/${data.merchant.id}/${data.merchant.environment.toLowerCase()}/dashboard`);
+    const env = data.merchant.environment.toLowerCase()
+    const path = `/${data.merchant.id}/${env}/dashboard`
+
+    // 👇 prefetch first, then push
+    await router.prefetch(path)
+    router.push(path)
+
   } catch (error) {
-    console.log("error", error);
-  } finally {
-    setIsLoading(false);
+    console.log("error", error)
   }
-};
+}
 
   return (
     <div className="relative inline-block" ref={menuRef}>
       <button onClick={() => setOpen((prev) => !prev)} className="size-9 rounded-full hover:scale-110 transition-all cursor-pointer overflow-hidden border border-white/10">
         <img
-          src={image || "/default-avatar.png"}
+          src={image || "https://cdn.iconscout.com/icon/free/png-256/free-avatar-icon-svg-download-png-456322.png"}
           alt={name || "User"}
           className="h-full w-full object-cover"
         />

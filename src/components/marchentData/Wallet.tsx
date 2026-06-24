@@ -1,11 +1,21 @@
-import React from 'react'
+"use client";
 
-const Wallet = () => {
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+
+export default function Wallet() {
+  const { address, isConnected } = useAccount();
+
   return (
-    <div>
-      Wallet
-    </div>
-  )
-}
+    <div className="space-y-4 h-screen w-full flex justify-center items-center">
+      <ConnectButton />
 
-export default Wallet
+      {isConnected && (
+        <div>
+          <p>Wallet Connected</p>
+          <p>Address: {address}</p>
+        </div>
+      )}
+    </div>
+  );
+}
