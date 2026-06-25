@@ -5,6 +5,8 @@ import Sidebar from "@/components/marchentData/Sidebar";
 import { authClient } from "@/lib/auth-client";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMerchantStore } from "@/stores/useMerchantStore";
 
 
 export default function Layout({
@@ -13,8 +15,11 @@ export default function Layout({
   children: React.ReactNode;
 }) {
   const { data: session } = authClient.useSession();
+  const router = useRouter();
+  const merchant = useMerchantStore((state) => state.merchant);
+  const basePath = `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`;
 
-    const [sidebar, setSidebar] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
 
   return (
     <div className=" className='flex flex-col items-start justify-start h-screen fixed top-0 left-0 right-0 bottom-0'">
@@ -54,16 +59,15 @@ export default function Layout({
                 return (
                   <button
                     type="button"
-                    onClick={connected ? openAccountModal : openConnectModal}
-                    className="h-9 max-w-[150px] truncate rounded-full bg-[#b8ff3c] px-4 text-sm font-semibold text-black shadow-[0_0_24px_rgba(184,255,60,0.18)] transition hover:bg-[#a8ef2b] active:scale-95 sm:max-w-none"
+                    onClick={connected ? () => router.push(`${basePath}`) : () => { openConnectModal(); router.push(`${basePath}`); }}
+                    className="h-9 max-w-37.5 truncate rounded-full cursor-pointer bg-[#b8ff3c] px-4 text-sm font-semibold text-black shadow-[0_0_24px_rgba(184,255,60,0.18)] transition hover:bg-[#a8ef2b] active:scale-95 sm:max-w-none"
                   >
-                    {label}
+                  {label}
                   </button>
                 );
               }}
             </ConnectButton.Custom>
           </div>
-          <UserMenu image={session?.user?.image} name={session?.user?.name} />
           </div>
       </nav>
 
