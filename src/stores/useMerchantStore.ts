@@ -63,7 +63,7 @@ export const useMerchantStore = create<MerchantStore>()(
     {
       name: "merchant-storage",          // localStorage key
       storage: createJSONStorage(() => localStorage),
-      partialState: (state) => ({ merchant: state.merchant }), // only persist merchant, not actions
+      partialize: (state) => ({ merchant: state.merchant }), // only persist merchant, not actions
     }
   )
 );

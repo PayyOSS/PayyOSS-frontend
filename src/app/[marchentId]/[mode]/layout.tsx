@@ -1,8 +1,9 @@
 "use client"
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { UserMenu } from "@/components/common/UserMenu";
 import Sidebar from "@/components/marchentData/Sidebar";
 import { authClient } from "@/lib/auth-client";
-import { Menu, Shield, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 
@@ -32,13 +33,36 @@ export default function Layout({
             </span>
           </a>
 
-          <div className='flex justify-center items-center gap-4'>
+          <div className='flex justify-center items-center gap-3 sm:gap-4'>
             {
               sidebar ? <X className='w-6 h-6 text-gray-600 sm:hidden' onClick={()=>setSidebar(false)}/>
                : <Menu className='w-6 h-6 text-gray-600 sm:hidden' onClick={()=>setSidebar(true)}/>
             }
   
+          <div>
+            <ConnectButton.Custom>
+              {({
+                account,
+                chain,
+                mounted,
+                openAccountModal,
+                openConnectModal,
+              }) => {
+                const connected = mounted && account && chain;
+                const label = connected ? account.displayName : "Connect Wallet";
 
+                return (
+                  <button
+                    type="button"
+                    onClick={connected ? openAccountModal : openConnectModal}
+                    className="h-9 max-w-[150px] truncate rounded-full bg-[#b8ff3c] px-4 text-sm font-semibold text-black shadow-[0_0_24px_rgba(184,255,60,0.18)] transition hover:bg-[#a8ef2b] active:scale-95 sm:max-w-none"
+                  >
+                    {label}
+                  </button>
+                );
+              }}
+            </ConnectButton.Custom>
+          </div>
           <UserMenu image={session?.user?.image} name={session?.user?.name} />
           </div>
       </nav>
