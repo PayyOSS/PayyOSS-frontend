@@ -107,7 +107,7 @@ export default function WalletOverview() {
                 <div className="mt-3 flex items-center gap-3">
                   <ShieldCheck className="h-6 w-6 text-[#b8ff3c]" />
                   <span className="text-lg font-medium text-white">
-                    ID Verified
+                    Address Verified
                   </span>
                 </div>
               </div>
