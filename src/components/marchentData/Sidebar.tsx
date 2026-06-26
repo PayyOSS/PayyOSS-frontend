@@ -28,11 +28,11 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
   ];
 
   useEffect(() => {
-    if (!merchant?.id) return;
-    navItems.forEach(({ to }) => {
-      router.prefetch(`${basePath}/${to}`);
-    });
-  }, [basePath]);
+  if (!merchant?.id) return;
+  navItems.forEach(({ to }) => {
+    router.prefetch(to); // ✅ just `to`, not `basePath/to`
+  });
+}, [basePath]);
 
   return (
     <div
@@ -42,7 +42,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
       <div className="my-7 w-full">
         <div className="text-sm text-gray-600 font-medium mx-3 mt-3">
           {navItems.map(({ to, label, Icon }) => {
-            const isActive = pathname.endsWith(to);
+            const isActive = pathname === to;
             return (
               <Link
                 href={to}
