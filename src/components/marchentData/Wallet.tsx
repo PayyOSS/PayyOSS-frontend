@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useAccount, useChainId } from "wagmi";
+import { useEffect, useState } from "react";
+import { useAccount, useChainId, useDisconnect } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import {
   Wallet,
@@ -13,15 +13,36 @@ import {
 } from "lucide-react";
 
 export default function WalletOverview() {
-  const [isEditing, setIsEditing] = useState(false);
-
   const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const { openConnectModal } = useConnectModal();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const shortAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : "";
+
+  // Show details only after the user connects
+  // while the modal is open
+  useEffect(() => {
+    if (isConnected && isEditing) {
+      setShowDetails(true);
+    }
+  }, [isConnected, isEditing]);
+
+  const handleOpenModal = () => {
+    setIsEditing(true);
+    setShowDetails(false);
+  };
+
+  const handleCloseModal = () => {
+    disconnect();
+    setIsEditing(false);
+    setShowDetails(false);
+  };
 
   return (
     <>
@@ -32,8 +53,8 @@ export default function WalletOverview() {
 
           {/* Edit Button */}
           <button
-            onClick={() => setIsEditing(true)}
-            className="absolute right-6 top-6 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-300 backdrop-blur-md transition hover:border-[#b8ff3c]/30 hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c]"
+            onClick={handleOpenModal}
+            className="absolute cursor-pointer right-6 top-6 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-300 backdrop-blur-md transition hover:border-[#b8ff3c]/30 hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c]"
           >
             <Pencil className="h-4 w-4" />
             Edit
@@ -53,13 +74,13 @@ export default function WalletOverview() {
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-xs text-zinc-500">Wallet Address</p>
+                <p className="text-xs text-zinc-500">
+                  Wallet Address
+                </p>
 
-                <div className="mt-1">
-                  <p className="truncate font-medium text-white">
-                    {shortAddress || "Not Connected"}
-                  </p>
-                </div>
+                <p className="mt-1 truncate font-medium text-white">
+                  {shortAddress || "Not Connected"}
+                </p>
 
                 {isConnected ? (
                   <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#b8ff3c]/20 bg-[#b8ff3c]/10 px-3 py-1 text-xs text-[#b8ff3c]">
@@ -68,10 +89,9 @@ export default function WalletOverview() {
                   </div>
                 ) : (
                   <button
-                    onClick={openConnectModal}
                     className="mt-3 rounded-full border border-[#b8ff3c]/20 bg-[#b8ff3c]/10 px-4 py-1.5 text-xs font-medium text-[#b8ff3c] transition hover:bg-[#b8ff3c]/20"
                   >
-                    Connect Wallet
+                    No connected Wallet
                   </button>
                 )}
               </div>
@@ -79,7 +99,7 @@ export default function WalletOverview() {
 
             {/* Info Items */}
             <div className="flex flex-1 flex-col gap-8 md:flex-row md:justify-around">
-              <div className="min-w-[180px] border-l border-white/10 py-2 pl-8">
+              <div className="min-w-45 border-l border-white/10 py-2 pl-8">
                 <p className="text-sm text-zinc-500">
                   Verification Status
                 </p>
@@ -92,8 +112,10 @@ export default function WalletOverview() {
                 </div>
               </div>
 
-              <div className="min-w-[180px] border-l border-white/10 py-2 pl-8">
-                <p className="text-sm text-zinc-500">Wallet Label</p>
+              <div className="min-w-45 border-l border-white/10 py-2 pl-8">
+                <p className="text-sm text-zinc-500">
+                  Wallet Label
+                </p>
 
                 <div className="mt-3 flex items-center gap-3">
                   <Tag className="h-6 w-6 text-[#b8ff3c]" />
@@ -103,8 +125,10 @@ export default function WalletOverview() {
                 </div>
               </div>
 
-              <div className="min-w-[180px] border-l border-white/10 py-2 pl-8">
-                <p className="text-sm text-zinc-500">Default Status</p>
+              <div className="min-w-45 border-l border-white/10 py-2 pl-8">
+                <p className="text-sm text-zinc-500">
+                  Default Status
+                </p>
 
                 <div className="mt-3 flex items-center gap-3">
                   <CheckCircle2 className="h-6 w-6 text-[#b8ff3c]" />
@@ -118,32 +142,35 @@ export default function WalletOverview() {
         </div>
       </div>
 
-      {/* Edit Modal */}
+      {/* Modal */}
       {isEditing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-[#05080A] p-6 shadow-2xl">
-            {/* Modal Header */}
+          <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#05080A] p-6 shadow-2xl">
+            {/* Header */}
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold text-white">
                 Edit Wallet
               </h2>
 
               <button
-                onClick={() => setIsEditing(false)}
-                className="rounded-lg p-2 text-zinc-500 transition hover:bg-white/5 hover:text-white"
+                onClick={handleCloseModal}
+                className="rounded-lg p-2 cursor-pointer text-zinc-500 transition hover:bg-white/5 hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="mt-8 space-y-6">
-              {/* Wallet Connection */}
-              <div>
-                <p className="mb-3 text-sm text-zinc-500">
-                  Wallet Connection
-                </p>
-
-                {isConnected ? (
+            {/* Content */}
+            <div className="mt-8">
+              {!showDetails ? (
+                <button
+                  onClick={openConnectModal}
+                  className="rounded-xl border cursor-pointer border-[#b8ff3c]/20 bg-[#b8ff3c]/10 px-5 py-3 font-medium text-[#b8ff3c] transition hover:bg-[#b8ff3c]/20"
+                >
+                  Connect Wallet
+                </button>
+              ) : (
+                <div className="space-y-5">
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs text-zinc-500">
                       Wallet Address
@@ -153,34 +180,25 @@ export default function WalletOverview() {
                       {address}
                     </p>
                   </div>
-                ) : (
+
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                    <p className="text-xs text-zinc-500">
+                      Chain ID
+                    </p>
+
+                    <p className="mt-2 text-lg font-medium text-white">
+                      {chainId}
+                    </p>
+                  </div>
+
                   <button
-                    onClick={openConnectModal}
-                    className="rounded-xl border border-[#b8ff3c]/20 bg-[#b8ff3c]/10 px-5 py-3 font-medium text-[#b8ff3c] transition hover:bg-[#b8ff3c]/20"
+                    onClick={handleCloseModal}
+                    className="w-full rounded-xl cursor-pointer bg-[#b8ff3c] px-5 py-3 font-semibold text-black transition hover:opacity-90"
                   >
-                    Connect Wallet
+                    Save Changes
                   </button>
-                )}
-              </div>
-
-              {/* Chain ID */}
-              {isConnected && (
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                  <p className="text-xs text-zinc-500">Chain ID</p>
-
-                  <p className="mt-2 text-lg font-medium text-white">
-                    {chainId}
-                  </p>
                 </div>
               )}
-
-              {/* Save Button */}
-              <button
-                onClick={() => setIsEditing(false)}
-                className="w-full rounded-xl bg-[#b8ff3c] px-5 py-3 font-semibold text-black transition hover:opacity-90"
-              >
-                Save Changes
-              </button>
             </div>
           </div>
         </div>
