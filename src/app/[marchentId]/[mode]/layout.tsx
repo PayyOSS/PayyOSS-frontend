@@ -59,7 +59,7 @@ export default function Layout({
                 return (
                   <button
                     type="button"
-                    onClick={connected ? () => router.push(`${basePath}`) : () => { openConnectModal(); router.push(`${basePath}`); }}
+                    onClick={connected ? () => router.push(`${basePath}`) : () => {router.push(`${basePath}`); }}
                     className="h-9 max-w-37.5 truncate rounded-full cursor-pointer bg-[#b8ff3c] px-4 text-sm font-semibold text-black shadow-[0_0_24px_rgba(184,255,60,0.18)] transition hover:bg-[#a8ef2b] active:scale-95 sm:max-w-none"
                   >
                   {label}

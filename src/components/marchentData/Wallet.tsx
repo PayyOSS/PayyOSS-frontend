@@ -33,6 +33,11 @@ export default function WalletOverview() {
     }
   }, [isConnected, isEditing]);
 
+  useEffect(() => {
+    setIsEditing(true);
+  }, [])
+  
+
   const handleOpenModal = () => {
     setIsEditing(true);
     setShowDetails(false);

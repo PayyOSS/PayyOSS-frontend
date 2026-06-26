@@ -21,10 +21,10 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
   const basePath = `/${merchant?.id}/${merchant?.environment?.toLowerCase()}`;
 
   const navItems = [
-    { to: "dashboard", label: "Dashboard", Icon: LayoutDashboardIcon },
-    { to: "transaction", label: "Transaction", Icon: ArrowLeftRightIcon },
-    { to: "wallet", label: "Wallet", Icon: Wallet },
-    { to: "assets", label: "Assets", Icon: Layers },
+    { to: `${basePath}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
+    { to: `${basePath}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
+    { to: `${basePath}/wallet`, label: "Wallet", Icon: Wallet },
+    { to: `${basePath}/assets`, label: "Assets", Icon: Layers },
   ];
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
             const isActive = pathname.endsWith(to);
             return (
               <Link
-                href={`${basePath}/${to}`}
+                href={to}
                 key={to}
                 prefetch={true}
                 onClick={() => setSidebar(false)}
