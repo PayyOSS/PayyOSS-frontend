@@ -71,9 +71,9 @@ export default function WalletOverview() {
             <span>Wallet Overview</span>
           </div>
 
-          <div className="relative mt-6 flex flex-col gap-6 lg:flex-row lg:items-center">
+          <div className="relative mt-6 flex flex-col gap-6 xl:flex-row xl:items-center">
             {/* Wallet Card */}
-            <div className="flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 lg:w-auto lg:min-w-[320px]">
+            <div className="flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 xl:w-auto xl:min-w-[320px]">
               <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#b8ff3c]/20 bg-[#b8ff3c]/10">
                 <Wallet className="h-8 w-8 text-[#b8ff3c]" />
               </div>
@@ -103,40 +103,40 @@ export default function WalletOverview() {
             </div>
 
             {/* Info Items */}
-            <div className="flex flex-1 flex-col gap-8 md:flex-row md:justify-around">
-              <div className="min-w-45 border-l border-white/10 py-2 pl-8">
-                <p className="text-sm text-zinc-500">
+            <div className="grid w-full flex-1 grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="min-w-0 border-l border-white/10 py-2 pl-5 lg:pl-8">
+                <p className="whitespace-nowrap text-sm text-zinc-500">
                   Verification Status
                 </p>
 
                 <div className="mt-3 flex items-center gap-3">
-                  <ShieldCheck className="h-6 w-6 text-[#b8ff3c]" />
+                  <ShieldCheck className="h-6 w-6 shrink-0 text-[#b8ff3c]" />
                   <span className="text-lg font-medium text-white">
                     Address Verified
                   </span>
                 </div>
               </div>
 
-              <div className="min-w-45 border-l border-white/10 py-2 pl-8">
-                <p className="text-sm text-zinc-500">
+              <div className="min-w-0 border-l border-white/10 py-2 pl-5 lg:pl-8">
+                <p className="whitespace-nowrap text-sm text-zinc-500">
                   Wallet Label
                 </p>
 
                 <div className="mt-3 flex items-center gap-3">
-                  <Tag className="h-6 w-6 text-[#b8ff3c]" />
+                  <Tag className="h-6 w-6 shrink-0 text-[#b8ff3c]" />
                   <span className="text-lg font-medium text-white">
                     Main Wallet
                   </span>
                 </div>
               </div>
 
-              <div className="min-w-45 border-l border-white/10 py-2 pl-8">
-                <p className="text-sm text-zinc-500">
+              <div className="min-w-0 border-l border-white/10 py-2 pl-5 lg:pl-8">
+                <p className="whitespace-nowrap text-sm text-zinc-500">
                   Default Status
                 </p>
 
                 <div className="mt-3 flex items-center gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-[#b8ff3c]" />
+                  <CheckCircle2 className="h-6 w-6 shrink-0 text-[#b8ff3c]" />
                   <span className="text-lg font-medium text-white">
                     True
                   </span>
