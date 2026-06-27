@@ -22,7 +22,7 @@ export default function Layout({
   const [sidebar, setSidebar] = useState(false);
 
   return (
-    <div className=" className='flex flex-col items-start justify-start h-screen fixed top-0 left-0 right-0 bottom-0'">
+    <div className="fixed inset-0 flex h-screen flex-col items-start justify-start overflow-hidden">
       {/* ALWAYS visible */}
 
     <nav className='w-full py-5 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between bg-black'>
@@ -71,11 +71,11 @@ export default function Layout({
           </div>
       </nav>
 
-      <div className='flex-1 w-full flex h-[calc(100vh-64px)]'>
+      <div className='flex min-h-0 w-full flex-1'>
        <Sidebar sidebar={sidebar} setSidebar={setSidebar}/>
 
       {/* ONLY this changes with URL */}
-      <div className="flex-1 rounded-tl-0  sm:rounded-tl-3xl bg-[#111111]">
+      <div className="min-h-0 flex-1 overflow-hidden rounded-tl-0 bg-[#111111] sm:rounded-tl-3xl">
         {children}
       </div>
       </div>
