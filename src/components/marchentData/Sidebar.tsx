@@ -18,13 +18,12 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
   const pathname = usePathname();
   const router = useRouter();
   const merchant = useMerchantStore((state) => state.merchant);
-  const basePath = `/${merchant?.id}/${merchant?.environment?.toLowerCase()}`;
 
   const navItems = [
-    { to: `${basePath}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
-    { to: `${basePath}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
-    { to: `${basePath}/wallet`, label: "Wallet", Icon: Wallet },
-    { to: `${basePath}/assets`, label: "Assets", Icon: Layers },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`, label: "Wallet", Icon: Wallet },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/assets`, label: "Assets", Icon: Layers },
   ];
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
   navItems.forEach(({ to }) => {
     router.prefetch(to); // ✅ just `to`, not `basePath/to`
   });
-}, [basePath]);
+}, []);
 
   return (
     <div

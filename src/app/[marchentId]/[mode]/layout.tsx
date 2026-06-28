@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMerchantStore } from "@/stores/useMerchantStore";
+import { useMerchantWalletStore } from "@/stores/useMerchantWalletStore";
 
 
 export default function Layout({
@@ -16,10 +17,13 @@ export default function Layout({
 }) {
   const { data: session } = authClient.useSession();
   const router = useRouter();
+  const { merchantWallet } = useMerchantWalletStore();
   const merchant = useMerchantStore((state) => state.merchant);
   const basePath = `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`;
 
   const [sidebar, setSidebar] = useState(false);
+
+  const label = merchantWallet?.walletAddress ? merchantWallet.walletAddress.slice(0, 6) + "..." + merchantWallet.walletAddress.slice(-4) : "Connect wallet";
 
   return (
     <div className="fixed inset-0 flex h-screen flex-col items-start justify-start overflow-hidden">
@@ -45,28 +49,13 @@ export default function Layout({
             }
   
           <div>
-            <ConnectButton.Custom>
-              {({
-                account,
-                chain,
-                mounted,
-                openAccountModal,
-                openConnectModal,
-              }) => {
-                const connected = mounted && account && chain;
-                const label = connected ? account.displayName : "Connect Wallet";
-
-                return (
                   <button
                     type="button"
-                    onClick={connected ? () => router.push(`${basePath}`) : () => {router.push(`${basePath}`); }}
+                    onClick={() => {router.push(`${basePath}`)}}
                     className="h-9 max-w-37.5 truncate rounded-full cursor-pointer bg-[#b8ff3c] px-4 text-sm font-semibold text-black shadow-[0_0_24px_rgba(184,255,60,0.18)] transition hover:bg-[#a8ef2b] active:scale-95 sm:max-w-none"
                   >
                   {label}
                   </button>
-                );
-              }}
-            </ConnectButton.Custom>
           </div>
           </div>
       </nav>
