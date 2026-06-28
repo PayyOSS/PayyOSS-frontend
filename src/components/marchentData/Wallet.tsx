@@ -25,9 +25,9 @@ export default function WalletOverview() {
   const chainId = useChainId();
   const { openConnectModal } = useConnectModal();
 
-  const { merchantWallet, setMerchantWallet } = useMerchantWalletStore();
+  const { merchantWallet, setMerchantWallet, isExpired } = useMerchantWalletStore();
   const { merchant } = useMerchantStore();
-  const hasWallet = !!merchantWallet.walletAddress;
+  const hasWallet = !!merchantWallet.walletAddress && !isExpired();
 
   const [isEditing, setIsEditing] = useState(false);
   const [showDetails, setShowDetails] = useState(false);

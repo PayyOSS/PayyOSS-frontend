@@ -20,9 +20,11 @@ export interface MerchantWalletDto {
 
 interface MerchantWalletStore {
   merchantWallet: MerchantWalletDto;
+  expiresAt: number | null;
   setMerchantWallet: (merchantWallet: MerchantWalletDto) => void;
   updateMerchantWallet: (data: Partial<MerchantWalletDto>) => void;
   resetMerchantWallet: () => void;
+  isExpired: () => boolean;
 }
 
 const initialMerchantWalletState: MerchantWalletDto = {
@@ -35,12 +37,16 @@ const initialMerchantWalletState: MerchantWalletDto = {
   verificationStatus: VerificationStatus.PENDING,
 };
 
+const TTL_MS = 10 * 60 * 1000; // 10 minutes
+
 export const useMerchantWalletStore = create<MerchantWalletStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       merchantWallet: initialMerchantWalletState,
+      expiresAt: null,
 
-      setMerchantWallet: (merchantWallet) => set({ merchantWallet }),
+      setMerchantWallet: (merchantWallet) =>
+        set({ merchantWallet, expiresAt: Date.now() + TTL_MS }),
 
       updateMerchantWallet: (data) =>
         set((state) => ({
@@ -48,15 +54,25 @@ export const useMerchantWalletStore = create<MerchantWalletStore>()(
             ...state.merchantWallet,
             ...data,
           },
+          expiresAt: Date.now() + TTL_MS, // reset TTL on update too
         })),
 
       resetMerchantWallet: () =>
-        set({ merchantWallet: initialMerchantWalletState }),
+        set({ merchantWallet: initialMerchantWalletState, expiresAt: null }),
+
+      isExpired: () => {
+        const { expiresAt } = get();
+        if (!expiresAt) return true;
+        return Date.now() > expiresAt;
+      },
     }),
     {
       name: "merchant-wallet-storage",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ merchantWallet: state.merchantWallet }),
+      partialize: (state) => ({
+        merchantWallet: state.merchantWallet,
+        expiresAt: state.expiresAt,
+      }),
     }
   )
 );
