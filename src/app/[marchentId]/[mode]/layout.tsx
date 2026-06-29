@@ -29,7 +29,7 @@ export default function Layout({
     <div className="fixed inset-0 flex h-screen flex-col items-start justify-start overflow-hidden">
       {/* ALWAYS visible */}
 
-    <nav className='w-full py-5 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between bg-black'>
+    <nav className='w-full py-3 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between bg-black'>
         <a href="/" className="flex items-center gap-2">
             <div className="relative">
               <span className="grid size-8.5 place-items-center rounded-full bg-[#b8ff3c] text-2xl font-black leading-none text-[#111804]">
@@ -64,7 +64,7 @@ export default function Layout({
        <Sidebar sidebar={sidebar} setSidebar={setSidebar}/>
 
       {/* ONLY this changes with URL */}
-      <div className="min-h-0 flex-1  overflow-y-auto rounded-tl-0 bg-[#111111] sm:rounded-tl-3xl">
+      <div className="min-h-0 flex-1  overflow-y-auto rounded-tl-0 bg-[#0b0d0f] sm:rounded-tl-3xl">
         {children}
       </div>
       </div>
