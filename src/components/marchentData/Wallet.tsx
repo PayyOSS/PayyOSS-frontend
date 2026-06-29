@@ -25,7 +25,7 @@ export default function WalletOverview() {
   const chainId = useChainId();
   const { openConnectModal } = useConnectModal();
 
-  const { merchantWallet, setMerchantWallet, isExpired } = useMerchantWalletStore();
+  const { merchantWallet, setMerchantWallet, resetMerchantWallet, isExpired } = useMerchantWalletStore();
   const { merchant } = useMerchantStore();
   const hasWallet = !!merchantWallet.walletAddress && !isExpired();
 
@@ -143,6 +143,11 @@ export default function WalletOverview() {
             verificationStatus: data.wallet.verificationStatus,
           });
         }
+        else {
+          resetMerchantWallet(); // Clear the store if no wallet is found
+          console.log("No wallet found for merchant:", merchant.id);
+        }
+        
         if (data.wallet) {
           setIsEditing(false);
         }
