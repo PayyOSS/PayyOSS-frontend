@@ -6,7 +6,9 @@
 
 html {
   background: #030403;
+  overflow-x: hidden;
 }
+
 
 a,
 button {

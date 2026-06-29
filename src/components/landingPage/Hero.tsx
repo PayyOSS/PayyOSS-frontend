@@ -75,7 +75,7 @@ export function Hero() {
 function DashboardPreview() {
   return (
     <div
-      className="relative mb-10 md:mx-auto mt-[clamp(48px,8vh,72px)] max-w-100 md:max-w-290 overflow-hidden rounded-t-[28px] bg-white/7 shadow-[0_32px_120px_rgba(0,0,0,0.56)] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[48%] after:bg-[linear-gradient(180deg,transparent,#030403_92%)] max-md:mt-[clamp(36px,6vh,56px)] max-md:rounded-t-[22px] max-sm:left-1/2 max-sm:mt-[clamp(28px,5vh,44px)] max-sm:w-[min(760px,calc(100vw+260px))] max-sm:-translate-x-1/2 max-sm:rounded-t-[18px]"
+      className="relative mb-10 md:mx-auto mt-[clamp(48px,8vh,72px)] max-w-100 md:max-w-290 overflow-hidden rounded-t-[28px] bg-white/7 shadow-[0_32px_120px_rgba(0,0,0,0.56)] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[48%] after:bg-[linear-gradient(180deg,transparent,#030403_92%)] max-md:mt-[clamp(36px,6vh,56px)] max-md:rounded-t-[22px] max-sm:left-1/2 max-sm:mt-[clamp(28px,5vh,44px)] max-sm:w-full max-sm:-translate-x-1/2 max-sm:rounded-t-[18px]"
       aria-label="PayyOSS dashboard preview"
     >
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 py-4 max-lg:grid-cols-[1fr_auto] max-md:gap-3 max-md:px-4 max-md:py-3 max-sm:gap-2 max-sm:px-3 max-sm:py-2.5">

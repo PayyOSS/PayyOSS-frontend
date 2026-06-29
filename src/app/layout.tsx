@@ -3,6 +3,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import "./globals.css";
 import { Providers } from "./provider";
 import WalletProviders from "@/components/common/walletProviders";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "PayyOSS | Crypto gatway",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <Providers>
           <WalletProviders>
           {children}
+          <Toaster position="top-right" />
           </WalletProviders>
         </Providers>
       </body>
