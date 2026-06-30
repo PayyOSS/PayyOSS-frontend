@@ -31,6 +31,21 @@ export default function AssetsPage() {
     const fetchAsset = async () => {
       try {
         const { data } = await api.get(`/asset/get/${merchant.id}`);
+
+        if(!data || !data.assets || data.assets.length === 0) {
+          setMerchantAsset({
+            id: "",
+            chainId: 0,
+            tokenAddress: "",
+            tokenName: "",
+            tokenSymbol: "",
+            tokenDecimals: 0,
+            settlementWalletId: "",
+            isVerified: false,
+          });
+          return;
+        }
+
         if (data.assets && data.assets.length > 0) {
           const asset = data.assets[0];
           setMerchantAsset({

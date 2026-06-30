@@ -36,14 +36,14 @@
 const TOKENS = {
   11142220: {
     USDC: {
-      assetType: "ERC-20",
+      assetType: "ERC20",
       tokenAddress: "0x01C5C0122039549AD1493B8220cABEdD739BC44E", // Celo Sepolia USDC address
       tokenName: "USD Coin",
       tokenSymbol: "USDC",
       tokenDecimals: 6,
     },
     USDT: {
-      assetType: "ERC-20",
+      assetType: "ERC20",
       tokenAddress: "0xd077A400968890Eacc75cdc901F0356c943e4fDb", // Celo Sepolia USDT address
       tokenName: "Tether USD",
       tokenSymbol: "USDT",
@@ -53,14 +53,14 @@ const TOKENS = {
 
   80002: {
     USDC: {
-      assetType: "ERC-20",
+      assetType: "ERC20",
       tokenAddress: "0xae1D7d8B36E9AbA7D95A75c69d50b38E7e02A9DD", // Polygon Amoy USDC address
       tokenName: "USD Coin",
       tokenSymbol: "USDC",
       tokenDecimals: 6,
     },
     USDT: {
-      assetType: "ERC-20",
+      assetType: "ERC20",
       tokenAddress: "0xda830ea6a7d5292a0b917743cda437a6ca4b3135", // Polygon Amoy USDT address
       tokenName: "Tether USD",
       tokenSymbol: "USDT",
