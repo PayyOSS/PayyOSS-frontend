@@ -54,14 +54,14 @@ const TOKENS = {
   80002: {
     USDC: {
       assetType: "ERC-20",
-      tokenAddress: "0x...", // Polygon Amoy USDC address
+      tokenAddress: "0xae1D7d8B36E9AbA7D95A75c69d50b38E7e02A9DD", // Polygon Amoy USDC address
       tokenName: "USD Coin",
       tokenSymbol: "USDC",
       tokenDecimals: 6,
     },
     USDT: {
       assetType: "ERC-20",
-      tokenAddress: "0x...", // Polygon Amoy USDT address
+      tokenAddress: "0xda830ea6a7d5292a0b917743cda437a6ca4b3135", // Polygon Amoy USDT address
       tokenName: "Tether USD",
       tokenSymbol: "USDT",
       tokenDecimals: 6,
