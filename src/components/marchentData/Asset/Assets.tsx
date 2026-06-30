@@ -15,9 +15,15 @@ import {
   Pencil,
 } from "lucide-react";
 import AssetForm from "./Create&UpdateAsset";
+import toast from "react-hot-toast";
+import { useMerchantWalletStore } from "@/stores/useMerchantWalletStore";
+import { useRouter } from "next/navigation";
 
 export default function AssetsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const { merchantWallet } = useMerchantWalletStore();
+  const router = useRouter();
+  const hasWallet = !!merchantWallet.walletAddress;
 
   const { merchantAsset, setMerchantAsset, isExpired } =
     useMerchantAssetStore();
@@ -32,7 +38,7 @@ export default function AssetsPage() {
       try {
         const { data } = await api.get(`/asset/get/${merchant.id}`);
 
-        if(!data || !data.assets || data.assets.length === 0) {
+        if (!data || !data.assets || data.assets.length === 0) {
           setMerchantAsset({
             id: "",
             chainId: 0,
@@ -71,13 +77,10 @@ export default function AssetsPage() {
   }, [merchant.id, hasAsset]);
 
   if (isFormOpen) {
-  return (
-    <AssetForm
-      onCloseAction={() => setIsFormOpen(false)}
-      isEdit={hasAsset}
-    />
-  );
-}
+    return (
+      <AssetForm onCloseAction={() => setIsFormOpen(false)} isEdit={hasAsset} />
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col text-white">
@@ -94,7 +97,21 @@ export default function AssetsPage() {
             </p>
           </div>
 
-          <button onClick={() => setIsFormOpen(true)} className="flex h-11 w-full items-center cursor-pointer justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-5 text-sm font-medium text-[#B8FF3C] transition hover:bg-[#B8FF3C]/10 active:scale-95 sm:w-auto">
+          <button
+            onClick={() => {
+              if (hasWallet) {
+                setIsFormOpen(true);
+              } else {
+                router.push(
+                  `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`,
+                );
+                toast.success(
+                  "Before creating an asset, first create a wallet",
+                );
+              }
+            }}
+            className="flex h-11 w-full items-center cursor-pointer justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-5 text-sm font-medium text-[#B8FF3C] transition hover:bg-[#B8FF3C]/10 active:scale-95 sm:w-auto"
+          >
             {hasAsset ? <Pencil size={18} /> : <Plus size={18} />}
             {hasAsset ? "Edit Asset" : "Add Asset"}
           </button>
@@ -116,7 +133,21 @@ export default function AssetsPage() {
               PayyOSS.
             </p>
 
-            <button onClick={() => setIsFormOpen(true)} className="mt-6 flex h-11 items-center gap-2 cursor-pointer rounded-2xl bg-[#B8FF3C] px-5 text-sm font-medium text-black transition hover:brightness-110 active:scale-95">
+            <button
+              onClick={() => {
+              if (hasWallet) {
+                setIsFormOpen(true);
+              } else {
+                router.push(
+                  `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`,
+                );
+                toast.success(
+                  "Before creating an asset, first create a wallet",
+                );
+              }
+            }}
+              className="mt-6 flex h-11 items-center gap-2 cursor-pointer rounded-2xl bg-[#B8FF3C] px-5 text-sm font-medium text-black transition hover:brightness-110 active:scale-95"
+            >
               <Plus size={18} />
               Add Asset
             </button>
@@ -125,146 +156,163 @@ export default function AssetsPage() {
           <>
             {/* Asset Table */}
             {/* Asset Table — desktop */}
-<div className="hidden overflow-x-auto rounded-[28px] border border-white/5 bg-[#14171C]/50 backdrop-blur-xl lg:block">
-  <div className="min-w-275">
-    <div className="grid grid-cols-[70px_100px_2fr_130px_100px_90px_110px_110px_90px] gap-4 border-b border-white/5 px-6 py-4 text-[11px] uppercase tracking-wide text-[#889098]">
-      <span>Chain ID</span>
-      <span>Asset Type</span>
-      <span>Token Address</span>
-      <span>Token Name</span>
-      <span>Token Symbol</span>
-      <span>Decimals</span>
-      <span>Status</span>
-      <span>Verified</span>
-      <span>Risk Level</span>
-    </div>
+            <div className="hidden overflow-x-auto rounded-[28px] border border-white/5 bg-[#14171C]/50 backdrop-blur-xl lg:block">
+              <div className="min-w-275">
+                <div className="grid grid-cols-[70px_100px_2fr_130px_100px_90px_110px_110px_90px] gap-4 border-b border-white/5 px-6 py-4 text-[11px] uppercase tracking-wide text-[#889098]">
+                  <span>Chain ID</span>
+                  <span>Asset Type</span>
+                  <span>Token Address</span>
+                  <span>Token Name</span>
+                  <span>Token Symbol</span>
+                  <span>Decimals</span>
+                  <span>Status</span>
+                  <span>Verified</span>
+                  <span>Risk Level</span>
+                </div>
 
-    <div className="grid grid-cols-[70px_100px_2fr_130px_100px_90px_110px_110px_90px] items-center gap-4 px-6 py-5 text-sm">
-      <span>{merchantAsset.chainId}</span>
-      <div>
-        <span className="rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs font-medium text-[#B8FF3C]">
-          {merchantAsset.assetType}
-        </span>
-      </div>
-      <span className="truncate font-mono text-xs" title={merchantAsset.tokenAddress}>
-        {merchantAsset.tokenAddress}
-      </span>
-      <span>{merchantAsset.tokenName}</span>
-      <span>{merchantAsset.tokenSymbol}</span>
-      <span>{merchantAsset.tokenDecimals}</span>
-      <div>
-        <span className="inline-flex items-center gap-2 rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs text-[#B8FF3C]">
-          <span className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
-          {merchantAsset.status}
-        </span>
-      </div>
-      <div className="flex items-center gap-2 text-[#B8FF3C]">
-        <CheckCheck size={15} />
-        <span className="text-xs">{merchantAsset.isVerified ? "Verified" : "Unverified"}</span>
-      </div>
-      <div>
-        <span className={`rounded-full px-3 py-1 text-xs ${
-          merchantAsset.riskLevel === "LOW"
-            ? "bg-[#B8FF3C]/10 text-[#B8FF3C]"
-            : merchantAsset.riskLevel === "MEDIUM"
-              ? "bg-yellow-500/10 text-yellow-400"
-              : "bg-red-500/10 text-red-400"
-        }`}>
-          {merchantAsset.riskLevel}
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
+                <div className="grid grid-cols-[70px_100px_2fr_130px_100px_90px_110px_110px_90px] items-center gap-4 px-6 py-5 text-sm">
+                  <span>{merchantAsset.chainId}</span>
+                  <div>
+                    <span className="rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs font-medium text-[#B8FF3C]">
+                      {merchantAsset.assetType}
+                    </span>
+                  </div>
+                  <span
+                    className="truncate font-mono text-xs"
+                    title={merchantAsset.tokenAddress}
+                  >
+                    {merchantAsset.tokenAddress}
+                  </span>
+                  <span>{merchantAsset.tokenName}</span>
+                  <span>{merchantAsset.tokenSymbol}</span>
+                  <span>{merchantAsset.tokenDecimals}</span>
+                  <div>
+                    <span className="inline-flex items-center gap-2 rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs text-[#B8FF3C]">
+                      <span className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
+                      {merchantAsset.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[#B8FF3C]">
+                    <CheckCheck size={15} />
+                    <span className="text-xs">
+                      {merchantAsset.isVerified ? "Verified" : "Unverified"}
+                    </span>
+                  </div>
+                  <div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs ${
+                        merchantAsset.riskLevel === "LOW"
+                          ? "bg-[#B8FF3C]/10 text-[#B8FF3C]"
+                          : merchantAsset.riskLevel === "MEDIUM"
+                            ? "bg-yellow-500/10 text-yellow-400"
+                            : "bg-red-500/10 text-red-400"
+                      }`}
+                    >
+                      {merchantAsset.riskLevel}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-{/* Asset Card — mobile & tablet */}
-<div className="lg:hidden rounded-[28px] border border-white/5 bg-[#14171C]/50 backdrop-blur-xl overflow-hidden">
+            {/* Asset Card — mobile & tablet */}
+            <div className="lg:hidden rounded-[28px] border border-white/5 bg-[#14171C]/50 backdrop-blur-xl overflow-hidden">
+              {/* Card Header */}
+              <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
+                  <span className="text-xs font-medium uppercase tracking-widest text-[#889098]">
+                    Asset Details
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-[#B8FF3C]">
+                  <CheckCheck size={13} />
+                  <span className="text-xs font-medium">
+                    {merchantAsset.isVerified ? "Verified" : "Unverified"}
+                  </span>
+                </div>
+              </div>
 
-  {/* Card Header */}
-  <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
-    <div className="flex items-center gap-2">
-      <div className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
-      <span className="text-xs font-medium uppercase tracking-widest text-[#889098]">Asset Details</span>
-    </div>
-    <div className="flex items-center gap-2 text-[#B8FF3C]">
-      <CheckCheck size={13} />
-      <span className="text-xs font-medium">
-        {merchantAsset.isVerified ? "Verified" : "Unverified"}
-      </span>
-    </div>
-  </div>
+              <div className="p-5 space-y-3">
+                {/* Token Identity */}
+                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                  <div>
+                    <p className="text-[11px] text-[#889098]">Token Name</p>
+                    <p className="mt-0.5 text-sm font-medium text-white">
+                      {merchantAsset.tokenName}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[11px] text-[#889098]">Symbol</p>
+                    <p className="mt-0.5 text-sm font-semibold text-white">
+                      {merchantAsset.tokenSymbol}
+                    </p>
+                  </div>
+                </div>
 
-  <div className="p-5 space-y-3">
+                {/* Asset Type + Chain */}
+                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                  <div>
+                    <p className="text-[11px] text-[#889098]">Asset Type</p>
+                    <span className="mt-1.5 inline-block rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs font-medium text-[#B8FF3C]">
+                      {merchantAsset.assetType}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[11px] text-[#889098]">Chain ID</p>
+                    <p className="mt-0.5 text-sm font-medium text-white">
+                      {merchantAsset.chainId}
+                    </p>
+                  </div>
+                </div>
 
-    {/* Token Identity */}
-    <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
-      <div>
-        <p className="text-[11px] text-[#889098]">Token Name</p>
-        <p className="mt-0.5 text-sm font-medium text-white">{merchantAsset.tokenName}</p>
-      </div>
-      <div className="text-right">
-        <p className="text-[11px] text-[#889098]">Symbol</p>
-        <p className="mt-0.5 text-sm font-semibold text-white">{merchantAsset.tokenSymbol}</p>
-      </div>
-    </div>
+                {/* Token Address */}
+                <div className="rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                  <p className="text-[11px] text-[#889098]">Token Address</p>
+                  <p className="mt-1 break-all font-mono text-xs leading-5 text-white/80">
+                    {merchantAsset.tokenAddress}
+                  </p>
+                </div>
 
-    {/* Asset Type + Chain */}
-    <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
-      <div>
-        <p className="text-[11px] text-[#889098]">Asset Type</p>
-        <span className="mt-1.5 inline-block rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs font-medium text-[#B8FF3C]">
-          {merchantAsset.assetType}
-        </span>
-      </div>
-      <div className="text-right">
-        <p className="text-[11px] text-[#889098]">Chain ID</p>
-        <p className="mt-0.5 text-sm font-medium text-white">{merchantAsset.chainId}</p>
-      </div>
-    </div>
+                {/* Decimals + Status + Risk */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
+                    <p className="text-[11px] text-[#889098]">Decimals</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {merchantAsset.tokenDecimals}
+                    </p>
+                  </div>
 
-    {/* Token Address */}
-    <div className="rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
-      <p className="text-[11px] text-[#889098]">Token Address</p>
-      <p className="mt-1 break-all font-mono text-xs leading-5 text-white/80">
-        {merchantAsset.tokenAddress}
-      </p>
-    </div>
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
+                    <p className="text-[11px] text-[#889098]">Status</p>
+                    <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-[#B8FF3C]/10 px-2 py-0.5 text-[11px] text-[#B8FF3C]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#B8FF3C]" />
+                      {merchantAsset.status}
+                    </span>
+                  </div>
 
-    {/* Decimals + Status + Risk */}
-    <div className="grid grid-cols-3 gap-3">
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
-        <p className="text-[11px] text-[#889098]">Decimals</p>
-        <p className="mt-1 text-sm font-semibold text-white">{merchantAsset.tokenDecimals}</p>
-      </div>
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
+                    <p className="text-[11px] text-[#889098]">Risk</p>
+                    <span
+                      className={`mt-1 rounded-full px-2 py-0.5 text-[11px] ${
+                        merchantAsset.riskLevel === "LOW"
+                          ? "bg-[#B8FF3C]/10 text-[#B8FF3C]"
+                          : merchantAsset.riskLevel === "MEDIUM"
+                            ? "bg-yellow-500/10 text-yellow-400"
+                            : "bg-red-500/10 text-red-400"
+                      }`}
+                    >
+                      {merchantAsset.riskLevel}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
-        <p className="text-[11px] text-[#889098]">Status</p>
-        <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-[#B8FF3C]/10 px-2 py-0.5 text-[11px] text-[#B8FF3C]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#B8FF3C]" />
-          {merchantAsset.status}
-        </span>
-      </div>
-
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
-        <p className="text-[11px] text-[#889098]">Risk</p>
-        <span className={`mt-1 rounded-full px-2 py-0.5 text-[11px] ${
-          merchantAsset.riskLevel === "LOW"
-            ? "bg-[#B8FF3C]/10 text-[#B8FF3C]"
-            : merchantAsset.riskLevel === "MEDIUM"
-              ? "bg-yellow-500/10 text-yellow-400"
-              : "bg-red-500/10 text-red-400"
-        }`}>
-          {merchantAsset.riskLevel}
-        </span>
-      </div>
-    </div>
-  </div>
-
-  {/* Card Footer */}
-  <div className="border-t border-white/5 px-5 py-3 text-xs text-[#889098]">
-    Showing 1 of 1 asset
-  </div>
-</div>
+              {/* Card Footer */}
+              <div className="border-t border-white/5 px-5 py-3 text-xs text-[#889098]">
+                Showing 1 of 1 asset
+              </div>
+            </div>
           </>
         )}
 

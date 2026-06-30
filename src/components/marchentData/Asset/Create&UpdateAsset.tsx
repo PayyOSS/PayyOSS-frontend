@@ -130,8 +130,6 @@ export default function AssetForm({ onCloseAction, isEdit }: AssetFormProps) {
         riskLevel: "LOW",
       };
 
-      console.log("Submitting asset creation payload:", payload);
-
       const { data } = await api.post("/asset/create", payload);
 
       if (!data.asset || !data.asset.id) {
