@@ -1,4 +1,4 @@
-import AssetsPage from '@/components/marchentData/Assets'
+import AssetsPage from '@/components/marchentData/Asset/Assets'
 import React from 'react'
 
 const page = () => {

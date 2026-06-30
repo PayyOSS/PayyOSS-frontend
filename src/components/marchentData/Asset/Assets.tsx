@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMerchantAssetStore } from "@/stores/useMerchantAssetStore";
 import { useMerchantStore } from "@/stores/useMerchantStore";
 import api from "@/config/axios";
@@ -14,8 +14,11 @@ import {
   Coins,
   Pencil,
 } from "lucide-react";
+import AssetForm from "./Create&UpdateAsset";
 
 export default function AssetsPage() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   const { merchantAsset, setMerchantAsset, isExpired } =
     useMerchantAssetStore();
   const { merchant } = useMerchantStore();
@@ -52,6 +55,15 @@ export default function AssetsPage() {
     fetchAsset();
   }, [merchant.id, hasAsset]);
 
+  if (isFormOpen) {
+  return (
+    <AssetForm
+      onCloseAction={() => setIsFormOpen(false)}
+      isEdit={hasAsset}
+    />
+  );
+}
+
   return (
     <div className="flex min-h-screen flex-col text-white">
       <main className="flex-1 px-4 py-5 sm:px-6 lg:px-8">
@@ -67,7 +79,7 @@ export default function AssetsPage() {
             </p>
           </div>
 
-          <button className="flex h-11 w-full items-center cursor-pointer justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-5 text-sm font-medium text-[#B8FF3C] transition hover:bg-[#B8FF3C]/10 active:scale-95 sm:w-auto">
+          <button onClick={() => setIsFormOpen(true)} className="flex h-11 w-full items-center cursor-pointer justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-5 text-sm font-medium text-[#B8FF3C] transition hover:bg-[#B8FF3C]/10 active:scale-95 sm:w-auto">
             {hasAsset ? <Pencil size={18} /> : <Plus size={18} />}
             {hasAsset ? "Edit Asset" : "Add Asset"}
           </button>
@@ -89,7 +101,7 @@ export default function AssetsPage() {
               PayyOSS.
             </p>
 
-            <button className="mt-6 flex h-11 items-center gap-2 cursor-pointer rounded-2xl bg-[#B8FF3C] px-5 text-sm font-medium text-black transition hover:brightness-110 active:scale-95">
+            <button onClick={() => setIsFormOpen(true)} className="mt-6 flex h-11 items-center gap-2 cursor-pointer rounded-2xl bg-[#B8FF3C] px-5 text-sm font-medium text-black transition hover:brightness-110 active:scale-95">
               <Plus size={18} />
               Add Asset
             </button>
