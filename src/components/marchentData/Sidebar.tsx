@@ -1,8 +1,12 @@
 import {
   ArrowLeftRightIcon,
+  KeyRound,
   Layers,
   LayoutDashboardIcon,
+  Store,
   Wallet,
+  Webhook,
+  Workflow,
 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -22,13 +26,14 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
   const navItems = [
     { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
     { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/merchant`, label: "Merchant", Icon: Store },
   ];
 
   const manageNavitem = [
     { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`, label: "Wallet", Icon: Wallet },
     { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/assets`, label: "Assets", Icon: Layers },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/api-key`, label: "Api-key", Icon: Wallet },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/webhook`, label: "Webhook", Icon: Layers },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/api-key`, label: "Api-key", Icon: KeyRound },
+    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/webhook`, label: "Webhook", Icon: Workflow },
 
   ]
 
@@ -59,7 +64,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 className={
                   isActive
                     ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2 active:scale-95 transition-transform duration-150"
-                    : "text-[#b8ff3c]/50 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:border-2 hover:border-[#b8ff3c]/30 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-[#b8ff3c]/30 bg-[#b8ff3c]/5 transition-transform duration-150"
+                    : "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:border-2 hover:border-[#b8ff3c]/30 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-[#b8ff3c]/20 bg-[#b8ff3c]/5 transition-transform duration-150"
                 }
               >
                 <Icon className="w-5 h-5" />
@@ -85,7 +90,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 className={
                   isActive
                     ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2 active:scale-95 transition-transform duration-150"
-                    : "text-[#b8ff3c]/50 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:border-2 hover:border-[#b8ff3c]/30 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-[#b8ff3c]/30 transition-transform duration-150"
+                    : "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:border-2 hover:border-[#b8ff3c]/30 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-[#b8ff3c]/20 transition-transform duration-150"
                 }
               >
                 <Icon className="w-5 h-5" />
