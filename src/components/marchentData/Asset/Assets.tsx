@@ -105,8 +105,11 @@ export default function AssetsPage() {
                 router.push(
                   `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`,
                 );
-                toast.success(
+                toast(
                   "Before creating an asset, first create a wallet",
+                  {
+                    duration: 6000,
+                  },
                 );
               }
             }}
@@ -135,17 +138,20 @@ export default function AssetsPage() {
 
             <button
               onClick={() => {
-              if (hasWallet) {
-                setIsFormOpen(true);
-              } else {
-                router.push(
-                  `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`,
-                );
-                toast.success(
-                  "Before creating an asset, first create a wallet",
-                );
-              }
-            }}
+                if (hasWallet) {
+                  setIsFormOpen(true);
+                } else {
+                  router.push(
+                    `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`,
+                  );
+                  toast(
+                    "Before creating an asset, first create a wallet",
+                    {
+                      duration: 6000,
+                    },
+                  );
+                }
+              }}
               className="mt-6 flex h-11 items-center gap-2 cursor-pointer rounded-2xl bg-[#B8FF3C] px-5 text-sm font-medium text-black transition hover:brightness-110 active:scale-95"
             >
               <Plus size={18} />

@@ -40,7 +40,7 @@ type AssetFormProps = {
 export default function AssetForm({ onCloseAction, isEdit }: AssetFormProps) {
   const { merchant } = useMerchantStore();
   const { merchantWallet } = useMerchantWalletStore();
-  const { setMerchantAsset } = useMerchantAssetStore();
+  const { merchantAsset, setMerchantAsset } = useMerchantAssetStore();
   const [fetchloading, setFetchLoading] = useState(false);
 
   const [form, setForm] = useState<FormState>({
@@ -118,22 +118,28 @@ export default function AssetForm({ onCloseAction, isEdit }: AssetFormProps) {
     try {
       setFetchLoading(true);
 
-      const payload = {
-        merchantId: merchant.id,
+      const basePayload = {
         chainId: form.chainId,
         assetType: form.assetType,
         tokenAddress: form.tokenAddress,
         tokenName: form.tokenName,
         tokenSymbol: form.tokenSymbol,
         tokenDecimals: Number(form.tokenDecimals),
-        settlementWalletId: merchantWallet.id,
         riskLevel: "LOW",
       };
 
-      const { data } = await api.post("/asset/create", payload);
+      // If an asset already exists, update it; otherwise create a new one.
+      // The update DTO does not accept merchantId / settlementWalletId.
+      const { data } = merchantAsset.id
+        ? await api.patch(`/asset/update/${merchantAsset.id}`, basePayload)
+        : await api.post("/asset/create", {
+            ...basePayload,
+            merchantId: merchant.id,
+            settlementWalletId: merchantWallet.id,
+          });
 
       if (!data.asset || !data.asset.id) {
-        console.error("Failed to create asset: Invalid response", data);
+        console.error("Failed to save asset: Invalid response", data);
         return;
       }
 
@@ -154,7 +160,7 @@ export default function AssetForm({ onCloseAction, isEdit }: AssetFormProps) {
 
       onCloseAction();
     } catch (err) {
-      console.error("Failed to create asset:", err);
+      console.error("Failed to save asset:", err);
     } finally {
       setFetchLoading(false);
     }
