@@ -41,13 +41,13 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
 
   return (
     <div
-      className={`w-55 bg-black z-50 flex flex-col justify-between items-center max-sm:absolute top-14
+      className={`w-50 bg-black z-50 flex flex-col justify-between items-center max-sm:absolute top-14
       bottom-0 ${sidebar ? "translate-x-0" : "max-sm:-translate-x-full"} transition-all duration-300 ease-in-out`}
     >
       <div className="my-7 w-full flex flex-col gap-10">
         <div>
-        <h1 className="text-gray-400 pl-3 font-medium text-[14px]">DETAILS</h1>
-        <div className="text-sm text-gray-600 font-medium mx-3 mt-3">
+        <h1 className="text-[#8ecd20]/50 pl-3 font-medium text-[14px]">DETAILS</h1>
+        <div className="text-sm text-[#b8ff3c]/30 font-medium mx-3 mt-3">
           {navItems.map(({ to, label, Icon }) => {
             const isActive = pathname === to;
             return (
@@ -59,7 +59,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 className={
                   isActive
                     ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2 active:scale-95 transition-transform duration-150"
-                    : "text-gray-500 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2 active:scale-95 active:bg-[#b8ff3c]/20 transition-transform duration-150"
+                    : "text-gray-500 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-border-gray-700 bg-[#b8ff3c]/5 transition-transform duration-150"
                 }
               >
                 <Icon className="w-5 h-5" />
@@ -72,8 +72,8 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
          
          {/* Manage NavItems */}
          <div>
-        <h1 className="text-gray-400 pl-3 font-medium text-[14px]">MANAGE</h1>
-        <div className="text-sm text-gray-600 font-medium mx-3">
+        <h1 className="text-[#8ecd20]/50 pl-3 font-medium text-[14px]">MANAGE</h1>
+        <div className="text-sm text-gray-600 font-medium mx-3 mt-3">
           {manageNavitem.map(({ to, label, Icon }) => {
             const isActive = pathname === to;
             return (
@@ -85,7 +85,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 className={
                   isActive
                     ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2 active:scale-95 transition-transform duration-150"
-                    : "text-gray-500 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2 active:scale-95 active:bg-[#b8ff3c]/20 transition-transform duration-150"
+                    : "text-gray-500 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-gray-700 transition-transform duration-150"
                 }
               >
                 <Icon className="w-5 h-5" />
