@@ -8,18 +8,32 @@ import {
   CalendarDays,
   TrendingUp,
   Zap,
+  Trash2,
 } from "lucide-react";
 
+type ApiKey = {
+  keyPrefix: string;
+  environment: string;
+  scopes: string[];
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string | null;
+  status: string;
+};
+
 export default function ApiKeyShowPage() {
-  const apiKey = {
+  // Set to `null` when the merchant has no API key yet.
+  const apiKey: ApiKey | null = {
     keyPrefix: "payyos_live_sk_7f3a****",
     environment: "Production",
-    scopes: ["payments:read", "payments:write"],
+    scopes: ["payments:write"],
     lastUsedAt: "2 hours ago",
     revokedAt: null,
     createdAt: "Jun 23, 2026 • 09:41 UTC",
     status: "Active",
   };
+
+  const hasApiKey = !!apiKey?.keyPrefix;
 
   return (
     <div className="min-h-screen bg-[#0B0D0F] px-4 py-6 text-white sm:px-6 lg:px-8">
@@ -35,7 +49,7 @@ export default function ApiKeyShowPage() {
           </p>
         </div>
 
-        <button className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-6 text-sm font-medium text-[#B8FF3C] shadow-[0_0_35px_rgba(184,255,60,0.15)] transition hover:bg-[#B8FF3C]/10 active:scale-95">
+        <button className="flex h-10 items-center justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-4 text-sm font-medium text-[#B8FF3C] shadow-[0_0_35px_rgba(184,255,60,0.15)] transition hover:bg-[#B8FF3C]/10 active:scale-95">
           <Plus size={18} />
           Create API Key
         </button>
@@ -52,112 +66,154 @@ export default function ApiKeyShowPage() {
 
             <div>
               <h2 className="text-2xl font-medium">
-                Active API Key
+                {hasApiKey ? "Active API Key" : "No API Key"}
               </h2>
 
               <p className="mt-2 text-[#889098]">
-                Use this key to authenticate your API requests.
+                {hasApiKey
+                  ? "Use this key to authenticate your API requests."
+                  : "You don't have an API key yet. Create one to start authenticating your requests."}
               </p>
             </div>
           </div>
 
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#B8FF3C]/10 px-4 py-2 text-sm text-[#B8FF3C]">
-            <span className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
-            Active
-          </span>
+          <div className="flex items-center gap-3">
+            {hasApiKey ? (
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#B8FF3C]/10 px-4 py-2 text-sm text-[#B8FF3C]">
+                <span className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
+                {apiKey?.status ?? "Active"}
+              </span>
+            ) : (
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm text-[#889098]">
+                <span className="h-2 w-2 rounded-full bg-[#889098]" />
+                Inactive
+              </span>
+            )}
+
+            {hasApiKey && (
+              <button
+                aria-label="Delete API key"
+                className="flex h-8 w-8 items-center cursor-pointer justify-center rounded-xl border border-white/10 bg-white/5 text-[#889098] transition hover:bg-white/10 hover:text-white active:scale-95"
+              >
+                <Trash2 size={18} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Details */}
-        <div className="grid gap-10 p-8 md:grid-cols-2 xl:grid-cols-3">
-          {/* Key Prefix */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#889098]">
-              Key Prefix
-            </p>
+        <div className="grid grid-cols-1 divide-y divide-white/5 md:grid-cols-2 md:divide-y-0 md:divide-x xl:grid-cols-3">
+  {/* Key Prefix */}
+  <div className="p-6">
+    <p className="text-[11px] uppercase tracking-wider text-[#889098]">
+      Key Prefix
+    </p>
 
-            <p className="mt-4 text-2xl font-medium">
-              {apiKey.keyPrefix}
-            </p>
-          </div>
+    <p
+      className={`mt-3 text-lg font-medium break-all ${
+        hasApiKey ? "" : "text-[#889098]"
+      }`}
+    >
+      {hasApiKey ? apiKey?.keyPrefix : "No API Key"}
+    </p>
+  </div>
 
-          {/* Environment */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#889098]">
-              Environment
-            </p>
+  {/* Environment */}
+  <div className="p-6">
+    <p className="text-[11px] uppercase tracking-wider text-[#889098]">
+      Environment
+    </p>
 
-            <div className="mt-4">
-              <span className="rounded-full bg-[#B8FF3C] px-4 py-2 text-sm font-medium text-black">
-                ● {apiKey.environment}
-              </span>
-            </div>
-          </div>
+    <div className="mt-3">
+      {hasApiKey ? (
+        <span className="inline-flex items-center gap-2 rounded-full bg-[#B8FF3C]/10 px-3 py-1.5 text-sm font-medium text-[#B8FF3C]">
+          <span className="h-2 w-2 rounded-full bg-[#B8FF3C]" />
+          {apiKey?.environment}
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-sm font-medium text-[#889098]">
+          <span className="h-2 w-2 rounded-full bg-[#889098]" />
+          No Environment
+        </span>
+      )}
+    </div>
+  </div>
 
-          {/* Scopes */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#889098]">
-              Scopes
-            </p>
+  {/* Scopes */}
+  <div className="p-6">
+    <p className="text-[11px] uppercase tracking-wider text-[#889098]">
+      Scopes
+    </p>
 
-            <div className="mt-4 flex flex-col gap-2 text-lg">
-              {apiKey.scopes.map((scope) => (
-                <span key={scope}>{scope}</span>
-              ))}
-            </div>
+    <div className="mt-3 flex flex-wrap gap-2">
+      {hasApiKey && apiKey && apiKey.scopes.length > 0 ? (
+        apiKey.scopes.map((scope) => (
+          <span
+            key={scope}
+            className="rounded-full bg-[#1A2A32] px-3 py-1 text-xs text-white"
+          >
+            {scope}
+          </span>
+        ))
+      ) : (
+        <span className="text-sm text-[#889098]">No Scopes</span>
+      )}
+    </div>
+  </div>
 
-            <button className="mt-5 rounded-full border border-[#1A2A32] bg-[#0B0D0F] px-4 py-2 text-sm text-[#B8FF3C]">
-              View all
-            </button>
-          </div>
+  {/* Last Used */}
+  <div className="p-6">
+    <p className="text-[11px] uppercase tracking-wider text-[#889098]">
+      Last Used At
+    </p>
 
-          {/* Last Used */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#889098]">
-              Last Used At
-            </p>
+    <div className="mt-3 flex items-center gap-2 text-sm">
+      <Clock3
+        size={16}
+        className={hasApiKey ? "text-[#B8FF3C]" : "text-[#889098]"}
+      />
+      <span className={hasApiKey ? "" : "text-[#889098]"}>
+        {hasApiKey ? apiKey?.lastUsedAt ?? "Never Used" : "Never Used"}
+      </span>
+    </div>
+  </div>
 
-            <div className="mt-4 flex items-center gap-3 text-lg">
-              <Clock3
-                size={20}
-                className="text-[#B8FF3C]"
-              />
+  {/* Revoked */}
+  <div className="p-6">
+    <p className="text-[11px] uppercase tracking-wider text-[#889098]">
+      Revoked At
+    </p>
 
-              <span>{apiKey.lastUsedAt}</span>
-            </div>
-          </div>
+    <div className="mt-3 flex items-center gap-2 text-sm">
+      <ShieldCheck
+        size={16}
+        className={hasApiKey ? "text-[#B8FF3C]" : "text-[#889098]"}
+      />
 
-          {/* Revoked */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#889098]">
-              Revoked At
-            </p>
+      <span className={hasApiKey ? "" : "text-[#889098]"}>
+        {hasApiKey ? apiKey?.revokedAt ?? "Not Revoked" : "No API Key"}
+      </span>
+    </div>
+  </div>
 
-            <div className="mt-4 flex items-center gap-3 text-lg">
-              <ShieldCheck
-                size={20}
-                className="text-[#B8FF3C]"
-              />
+  {/* Created */}
+  <div className="p-6">
+    <p className="text-[11px] uppercase tracking-wider text-[#889098]">
+      Created At
+    </p>
 
-              <span>Not Revoked</span>
-            </div>
-          </div>
+    <div className="mt-3 flex items-center gap-2 text-sm">
+      <CalendarDays
+        size={16}
+        className={hasApiKey ? "text-[#B8FF3C]" : "text-[#889098]"}
+      />
 
-          {/* Created */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-[#889098]">
-              Created At
-            </p>
-
-            <div className="mt-4 flex items-center gap-3 text-lg">
-              <CalendarDays
-                size={20}
-                className="text-[#B8FF3C]"
-              />
-
-              <span>{apiKey.createdAt}</span>
-            </div>
-          </div>
-        </div>
+      <span className={hasApiKey ? "" : "text-[#889098]"}>
+        {hasApiKey ? apiKey?.createdAt ?? "Not Created" : "Not Created"}
+      </span>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* Feature Cards */}
