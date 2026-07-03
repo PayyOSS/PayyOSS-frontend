@@ -13,6 +13,7 @@ import {
   CheckCheck,
   Coins,
   Pencil,
+  Loader2,
 } from "lucide-react";
 import AssetForm from "./Create&UpdateAsset";
 import toast from "react-hot-toast";
@@ -21,6 +22,7 @@ import { useRouter } from "next/navigation";
 
 export default function AssetsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { merchantWallet } = useMerchantWalletStore();
   const router = useRouter();
   const hasWallet = !!merchantWallet.walletAddress;
@@ -31,10 +33,16 @@ export default function AssetsPage() {
   const hasAsset = !!merchantAsset.id && !isExpired();
 
   useEffect(() => {
-    if (!merchant.id) return;
-    if (hasAsset) return; // skip if still valid in store
-
+    if (!merchant.id) {
+      return;
+    }
+    
+    if (hasAsset) {
+      return;
+    } // skip if still valid in store
+    
     const fetchAsset = async () => {
+      setIsLoading(true);
       try {
         const { data } = await api.get(`/asset/get/${merchant.id}`);
 
@@ -70,6 +78,8 @@ export default function AssetsPage() {
         }
       } catch (err) {
         console.error("Failed to fetch asset:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -82,7 +92,16 @@ export default function AssetsPage() {
     );
   }
 
-  return (
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex min-h-screen flex-col items-center justify-center text-white">
+  //       <Loader2 size={48} className="animate-spin text-[#B8FF3C]" />
+  //       <p className="mt-4 text-sm text-[#889098]">Loading assets...</p>
+  //     </div>
+  //   );
+  // }
+
+  return isLoading === false ? (
     <div className="flex min-h-screen flex-col text-white">
       <main className="flex-1 px-4 py-5 sm:px-6 lg:px-8">
         {/* Header */}
@@ -359,6 +378,11 @@ export default function AssetsPage() {
           <button className="transition hover:text-white">Privacy</button>
         </div>
       </footer>
+    </div>
+  ):(
+    <div className="flex min-h-screen flex-col items-center justify-center text-white">
+      <Loader2 size={48} className="animate-spin text-[#B8FF3C]" />
+      <p className="mt-4 text-sm text-[#889098]">Loading assets...</p>
     </div>
   );
 }

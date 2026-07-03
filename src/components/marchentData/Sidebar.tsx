@@ -46,7 +46,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
 
   return (
     <div
-      className={`w-50 bg-black z-50 flex flex-col justify-between items-center max-sm:absolute top-14
+      className={`w-55 bg-black z-50 flex flex-col justify-between items-center max-sm:absolute top-14
       bottom-0 ${sidebar ? "translate-x-0" : "max-sm:-translate-x-full"} transition-all duration-300 ease-in-out`}
     >
       <div className="my-7 w-full flex flex-col gap-10">
