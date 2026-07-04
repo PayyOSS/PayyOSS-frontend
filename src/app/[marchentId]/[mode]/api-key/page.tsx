@@ -1,4 +1,4 @@
-import ApiKeyShowPage from '@/components/marchentData/ApiKey'
+import ApiKeyShowPage from '@/components/marchentData/Apikey/ApiKey'
 import React from 'react'
 
 const page = () => {
