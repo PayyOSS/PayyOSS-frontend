@@ -142,7 +142,7 @@ export default function ApiKeyShowPage() {
           <button
             onClick={handleCreateApiKey}
             disabled={isCreating}
-            className="flex cursor-pointer h-10 items-center justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-4 text-sm font-medium text-[#B8FF3C] shadow-[0_0_35px_rgba(184,255,60,0.15)] transition hover:bg-[#B8FF3C]/10 active:scale-95 disabled:opacity-50"
+            className="flex mt-0 md:mt-7 cursor-pointer h-10 items-center justify-center gap-2 rounded-2xl border border-[#B8FF3C] px-4 text-sm font-medium text-[#B8FF3C] shadow-[0_0_35px_rgba(184,255,60,0.15)] transition hover:bg-[#B8FF3C]/10 active:scale-95 disabled:opacity-50"
           >
             {isCreating ? (
               <Loader2 size={18} className="animate-spin" />

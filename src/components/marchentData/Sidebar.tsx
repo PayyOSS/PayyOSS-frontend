@@ -64,7 +64,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 className={
                   isActive
                     ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2 active:scale-95 transition-transform duration-150"
-                    : "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:border-2 hover:border-[#b8ff3c]/30 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-[#b8ff3c]/20 bg-[#b8ff3c]/5 transition-transform duration-150"
+                    : "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 transition-transform duration-150"
                 }
               >
                 <Icon className="w-5 h-5" />
@@ -90,7 +90,7 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 className={
                   isActive
                     ? "bg-linear-to-r from-[#8ecd20] via-[#c8ff62e3] to-[#8ecd20] text-black rounded-xl font-semibold w-full px-5 py-2 flex items-center gap-3 mt-2 active:scale-95 transition-transform duration-150"
-                    : "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:border-2 hover:border-[#b8ff3c]/30 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 border-2 border-[#b8ff3c]/20 transition-transform duration-150"
+                    : "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 transition-transform duration-150"
                 }
               >
                 <Icon className="w-5 h-5" />
