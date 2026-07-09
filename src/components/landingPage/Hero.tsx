@@ -234,7 +234,7 @@ function DashboardPreview() {
                   className="min-h-9.5 flex-1 rounded-full bg-[#e9e8e0] text-[11px] font-bold text-[#161613] max-sm:min-h-8 max-sm:text-[10px]"
                   type="button"
                 >
-                  Send Monei
+                  Send Money
                 </button>
               </div>
             </article>
