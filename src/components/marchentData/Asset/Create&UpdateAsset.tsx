@@ -20,7 +20,7 @@ export const CHAINS = [
   },
 ];
 
-const TOKENS = ["USDC", "USDT"];
+const TOKENS = ["USDC", "USDT", "MTK"];
 
 type FormState = {
   chainId: number | "";

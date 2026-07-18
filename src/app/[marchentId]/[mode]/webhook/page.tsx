@@ -1,4 +1,4 @@
-import WebHook from '@/components/marchentData/WebHook'
+import WebHook from '@/components/marchentData/Webhook/WebHook'
 import React from 'react'
 
 const page = () => {

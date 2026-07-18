@@ -49,6 +49,13 @@ const TOKENS = {
       tokenSymbol: "USDT",
       tokenDecimals: 6,
     },
+    MTK: {
+      assetType: "ERC20",
+      tokenAddress: "0x6c42Bf77e00457ef86c09Ca7AD86769a9A4c6F05", // Celo Sepolia MTK address
+      tokenName: "MTK",
+      tokenSymbol: "MTK",
+      tokenDecimals: 18,
+    }
   },
 
   80002: {

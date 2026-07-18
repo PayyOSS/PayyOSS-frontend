@@ -1,0 +1,14 @@
+{
+  "amount": "15.00",
+  "successUrl": "https://merchant.com/success",
+  "cancelUrl": "https://merchant.com/cancel",
+  "metadata": {
+    "orderId": "ORD_20260708_001",
+    "customerId": "CUS_123456",
+    "plan": "Premium",
+    "source": "website"
+  }
+}
+
+
+Apikey=payyos_test_sk_11798cb8f1c5217f61967fb3adf44a2c29f4929ae70293c0325e7e3e00d29c4023f15b89c1931e8702d45777f30592fab214e5b0cc7a6370dd63c1f3e5b7eb0a
