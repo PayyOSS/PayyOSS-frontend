@@ -16,6 +16,7 @@ import { useApiKeyStore } from "@/stores/useApiKeyStore";
 import { useMerchantStore } from "@/stores/useMerchantStore";
 import api from "@/config/axios";
 import ShowApiKey from "./ShowApiKey";
+import ApiKeyLoader from "./ApiKeyLoader";
 import toast from "react-hot-toast";
 
 export default function ApiKeyShowPage() {
@@ -114,14 +115,7 @@ export default function ApiKeyShowPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0B0D0F] text-white">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-[#B8FF3C]" />
-          <p className="text-sm text-[#889098]">Loading API key...</p>
-        </div>
-      </div>
-    );
+    return <ApiKeyLoader />;
   }
 
   return (

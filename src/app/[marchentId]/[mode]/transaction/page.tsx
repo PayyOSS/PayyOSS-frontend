@@ -1,10 +1,10 @@
-import Transection from '@/components/marchentData/Transection'
+import Transections from '@/components/marchentData/Transection/Transection'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <Transection />
+      <Transections />
     </div>
   )
 }
