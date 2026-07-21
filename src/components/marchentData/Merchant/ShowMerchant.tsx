@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
-  ArrowLeft,
   BriefcaseBusiness,
   CalendarDays,
   Check,
@@ -15,41 +15,73 @@ import {
   Trash2,
   UserRound,
 } from "lucide-react";
+import api from "@/config/axios";
+import {
+  ApiEnvironment,
+  CreateMerchantDto,
+  MerchantStatus,
+  useMerchantStore,
+} from "@/stores/useMerchantStore";
+import MerchantLoder from "./MerchantLoder";
 
-enum ApiEnvironment {
-  TEST = "TEST",
-  LIVE = "LIVE",
+interface MerchantResponse {
+  success: boolean;
+  merchant?: CreateMerchantDto;
+  message?: string;
 }
-
-enum MerchantStatus {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-}
-
-enum BusinessType {
-  INDIVIDUAL = "INDIVIDUAL",
-  COMPANY = "COMPANY",
-  NON_PROFIT = "NON_PROFIT",
-}
-
-const merchant = {
-  name: "Acme Store",
-  imageUrl: "",
-  email: "merchant@acmestore.com",
-  companyUrl: "https://acmestore.com",
-  environment: ApiEnvironment.LIVE,
-  status: MerchantStatus.ACTIVE,
-  businessType: BusinessType.COMPANY,
-  createdAt: "May 24, 2024 at 10:42 AM UTC",
-};
 
 export default function ShowMerchant() {
-  const initials = merchant.name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const [isLoading, setIsLoading] = useState(true);
+  const merchant = useMerchantStore((state) => state.merchant);
+  const setMerchant = useMerchantStore((state) => state.setMerchant);
+  const resetMerchant = useMerchantStore((state) => state.resetMerchant);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetchMerchant = async () => {
+      setIsLoading(true);
+
+      try {
+        const { data } = await api.get<MerchantResponse>("/merchant/userId");
+
+        if (isCancelled) return;
+
+        if (!data.success || !data.merchant?.id) {
+          resetMerchant();
+          return;
+        }
+
+        setMerchant({
+          id: data.merchant.id,
+          name: data.merchant.name,
+          imageUrl: data.merchant.imageUrl,
+          email: data.merchant.email,
+          companyUrl: data.merchant.companyUrl,
+          createdAt: data.merchant.createdAt,
+          environment: data.merchant.environment,
+          status: data.merchant.status,
+          businessType: data.merchant.businessType,
+        });
+      } catch (error) {
+        if (isCancelled) return;
+        resetMerchant();
+        console.error("Failed to fetch merchant:", error);
+      } finally {
+        if (!isCancelled) setIsLoading(false);
+      }
+    };
+
+    void fetchMerchant();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [resetMerchant, setMerchant]);
+
+  if (isLoading) return <MerchantLoder />;
+
+  const merchantName = merchant.name || "Unnamed Merchant";
 
   return (
     <div className="min-h-screen bg-[#02070A] px-4 py-5 text-white sm:px-6 lg:px-8">
@@ -61,63 +93,62 @@ export default function ShowMerchant() {
             <span className="text-[#556069]">›</span>
             <span className="font-medium text-white">Merchant Details</span>
           </div>
-
-          <button
-            type="button"
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/2 px-4 text-sm font-medium text-white transition hover:bg-white/5 sm:w-auto"
-          >
-            <ArrowLeft size={16} />
-            Back to Merchants
-          </button>
         </div>
 
         {/* Merchant summary */}
-        <section className="mt-5 rounded-2xl border border-white/8 bg-[linear-gradient(135deg,rgba(10,17,21,0.96),rgba(4,9,12,0.98))] px-5 py-6 sm:px-7 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+        <section className="mt-4 rounded-2xl border border-white/8 bg-[linear-gradient(135deg,rgba(10,17,21,0.96),rgba(4,9,12,0.98))] px-4 py-4 sm:px-6 sm:py-5 lg:px-7">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="relative mx-auto shrink-0 sm:mx-0">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/4 text-[#B8FF3C] sm:h-28 sm:w-28">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/4 text-[#B8FF3C] sm:h-22 sm:w-22">
                   {merchant.imageUrl ? (
                     <img
                       src={merchant.imageUrl}
-                      alt={merchant.name}
+                      alt={merchantName}
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
-                    <Store size={42} strokeWidth={1.7} />
+                    <Store size={34} strokeWidth={1.7} />
                   )}
                 </div>
 
-                <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-4 border-[#070D10] bg-[#B8FF3C] text-black">
-                  <Check size={14} strokeWidth={3} />
+                <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-3 border-[#070D10] bg-[#B8FF3C] text-black">
+                  <Check size={12} strokeWidth={3} />
                 </div>
               </div>
 
               <div className="text-center sm:text-left">
                 <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-                  <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                    {merchant.name}
+                  <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+                    {merchantName}
                   </h1>
 
-                  <StatusBadge status={merchant.status} />
+                  <StatusBadge status={merchant.status ?? MerchantStatus.PENDING} />
                 </div>
 
-                <div className="mt-4 grid gap-3 text-sm text-[#A6ADB5]">
+                <div className="mt-3 grid gap-2 text-xs text-[#A6ADB5] sm:text-sm">
                   <div className="flex items-center justify-center gap-3 sm:justify-start">
                     <Mail size={17} />
-                    <span>{merchant.email}</span>
+                    <span>{merchant.email || "Not provided"}</span>
                   </div>
 
-                  <a
-                    href={merchant.companyUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-center gap-3 transition hover:text-white sm:justify-start"
-                  >
-                    <Globe2 size={17} />
-                    <span>{merchant.companyUrl}</span>
-                    <ExternalLink size={15} />
-                  </a>
+                  {merchant.companyUrl ? (
+                    <a
+                      href={merchant.companyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-center gap-3 transition hover:text-white sm:justify-start"
+                    >
+                      <Globe2 size={17} />
+                      <span>{merchant.companyUrl}</span>
+                      <ExternalLink size={15} />
+                    </a>
+                  ) : (
+                    <div className="flex items-center justify-center gap-3 sm:justify-start">
+                      <Globe2 size={17} />
+                      <span>Company URL not provided</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -125,17 +156,23 @@ export default function ShowMerchant() {
             <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
               <button
                 type="button"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/2 px-5 text-sm font-medium text-white transition hover:bg-white/6"
+                className="group inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/2 px-4 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#B8FF3C]/35 hover:bg-[#B8FF3C]/8 hover:text-[#B8FF3C] hover:shadow-[0_8px_24px_rgba(184,255,60,0.10)] active:translate-y-0 active:scale-95"
               >
-                <Pencil size={17} />
+                <Pencil
+                  size={17}
+                  className="transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+                />
                 Edit
               </button>
 
               <button
                 type="button"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-red-500/40 bg-red-500/5 px-5 text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+                className="group inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-500/40 bg-red-500/5 px-4 text-sm font-medium text-red-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-400/70 hover:bg-red-500/12 hover:text-red-300 hover:shadow-[0_8px_24px_rgba(239,68,68,0.13)] active:translate-y-0 active:scale-95"
               >
-                <Trash2 size={17} />
+                <Trash2
+                  size={17}
+                  className="transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110"
+                />
                 Delete
               </button>
             </div>
@@ -158,48 +195,52 @@ export default function ShowMerchant() {
             <InfoRow
               icon={<UserRound size={18} />}
               label="Name"
-              value={merchant.name}
+              value={merchantName}
             />
 
             <InfoRow
               icon={<Mail size={18} />}
               label="Email"
-              value={merchant.email}
+              value={merchant.email || "Not provided"}
             />
 
             <InfoRow
               icon={<Globe2 size={18} />}
               label="Company URL"
             >
-              <a
-                href={merchant.companyUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 text-white transition hover:text-[#B8FF3C]"
-              >
-                <span>{merchant.companyUrl}</span>
-                <ExternalLink size={15} />
-              </a>
+              {merchant.companyUrl ? (
+                <a
+                  href={merchant.companyUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 text-white transition hover:text-[#B8FF3C]"
+                >
+                  <span>{merchant.companyUrl}</span>
+                  <ExternalLink size={15} />
+                </a>
+              ) : (
+                <span className="text-[#889098]">Not provided</span>
+              )}
             </InfoRow>
 
             <InfoRow
               icon={<Code2 size={18} />}
               label="Environment"
             >
-              <EnvironmentBadge environment={merchant.environment} />
+              <EnvironmentBadge environment={merchant.environment ?? ApiEnvironment.TEST} />
             </InfoRow>
 
             <InfoRow
               icon={<ShieldCheck size={18} />}
               label="Status"
             >
-              <StatusBadge status={merchant.status} />
+              <StatusBadge status={merchant.status ?? MerchantStatus.PENDING} />
             </InfoRow>
 
             <InfoRow
               icon={<BriefcaseBusiness size={18} />}
               label="Business Type"
-              value={formatEnumValue(merchant.businessType)}
+              value={merchant.businessType ? formatEnumValue(merchant.businessType) : "Not available"}
               last
             />
           </div>
@@ -210,7 +251,7 @@ export default function ShowMerchant() {
               <span className="text-sm">Created At</span>
             </div>
 
-            <span className="text-sm text-white">{merchant.createdAt}</span>
+            <span className="text-sm text-white">{formatCreatedAt(merchant.createdAt)}</span>
           </div>
         </section>
       </div>
@@ -294,4 +335,21 @@ function formatEnumValue(value: string) {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+function formatCreatedAt(value: string | null | undefined) {
+  if (!value) return "Not available";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "UTC",
+    timeZoneName: "short",
+  }).format(date);
 }

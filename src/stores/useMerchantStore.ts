@@ -3,17 +3,21 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 export enum ApiEnvironment {
   TEST = "TEST",
-  LIVEu = "LIVE",
+  LIVE = "LIVE",
 }
 
 export enum MerchantStatus {
+  PENDING = "PENDING",
   ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
+  SUSPENDED = "SUSPENDED",
+  DISABLED = "DISABLED",
 }
 
 export enum BusinessType {
   INDIVIDUAL = "INDIVIDUAL",
   COMPANY = "COMPANY",
+  STARTUP = "STARTUP",
+  NON_PROFIT = "NON_PROFIT",
 }
 
 export interface CreateMerchantDto {
