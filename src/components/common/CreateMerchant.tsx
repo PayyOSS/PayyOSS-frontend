@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Mail, Upload, Loader2 } from "lucide-react";
-import axios from "axios";
+import { Building2, Globe2, Mail, Upload, Loader2 } from "lucide-react";
 import api from "@/config/axios";
 import { useMerchantStore } from "@/stores/useMerchantStore";
 import { useRouter } from "next/navigation";
@@ -17,12 +16,14 @@ enum BusinessType {
 export default function CreateMerchantForm() {
   const router = useRouter();
   const [logo, setLogo] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const setMerchant = useMerchantStore((state) => state.setMerchant);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    companyUrl: "",
     businessType: "",
   });
 
@@ -38,9 +39,18 @@ export default function CreateMerchantForm() {
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (file) {
-      setLogo(URL.createObjectURL(file));
+    if (!file) return;
+    if (!file.type.startsWith("image/") || file.size > 2 * 1024 * 1024) {
+      e.target.value = "";
+      return;
     }
+
+    setLogoFile(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") setLogo(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,14 +59,14 @@ export default function CreateMerchantForm() {
     try {
       setLoading(true);
 
-      const { data } = await api.post(
-        "merchant/create",
-        {
-          name: formData.name,
-          email: formData.email,
-          businessType: formData.businessType,
-        }
-      );
+      const payload = new FormData();
+      payload.append("name", formData.name);
+      payload.append("email", formData.email);
+      payload.append("businessType", formData.businessType);
+      if (formData.companyUrl) payload.append("companyUrl", formData.companyUrl);
+      if (logoFile) payload.append("image", logoFile);
+
+      const { data } = await api.post("merchant/create", payload);
 
       if(data?.success){
         setMerchant({
@@ -64,6 +74,8 @@ export default function CreateMerchantForm() {
           name: data.merchant.name,
           imageUrl: data.merchant.imageUrl,
           email: data.merchant.email,
+          companyUrl: data.merchant.companyUrl,
+          createdAt: data.merchant.createdAt,
           environment: data.merchant.environment,
           status: data.merchant.status,
           businessType: data.merchant.businessType,
@@ -115,7 +127,7 @@ export default function CreateMerchantForm() {
       </label>
 
       <p className="mt-3 text-xs text-zinc-500">
-        Add your business logo
+        Add your business logo (max 2 MB)
       </p>
     </div>
 
@@ -158,6 +170,32 @@ export default function CreateMerchantForm() {
             className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
           />
         </div>
+      </div>
+
+      {/* Company URL */}
+      <div>
+        <label className="mb-2 block text-sm font-medium text-zinc-300">
+          Company URL <span className="font-normal text-zinc-500">(Optional)</span>
+        </label>
+
+        <div className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/3 px-4 py-3 transition-all duration-300 focus-within:border-[#b8ff3c]/70 focus-within:bg-[#b8ff3c]/10">
+          <Globe2 className="h-5 w-5 shrink-0 text-zinc-500" />
+
+          <input
+            type="url"
+            name="companyUrl"
+            inputMode="url"
+            autoComplete="url"
+            placeholder="https://company.com"
+            value={formData.companyUrl}
+            onChange={handleChange}
+            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
+          />
+        </div>
+
+        <p className="mt-1.5 text-xs text-zinc-500">
+          Include https:// at the beginning of the URL.
+        </p>
       </div>
 
       {/* Business Type */}

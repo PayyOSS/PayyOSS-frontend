@@ -255,7 +255,7 @@ export default function AssetsPage() {
 
               <div className="p-5 space-y-3">
                 {/* Token Identity */}
-                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/3 px-4 py-3">
                   <div>
                     <p className="text-[11px] text-[#889098]">Token Name</p>
                     <p className="mt-0.5 text-sm font-medium text-white">
@@ -271,7 +271,7 @@ export default function AssetsPage() {
                 </div>
 
                 {/* Asset Type + Chain */}
-                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/3 px-4 py-3">
                   <div>
                     <p className="text-[11px] text-[#889098]">Asset Type</p>
                     <span className="mt-1.5 inline-block rounded-full bg-[#B8FF3C]/10 px-3 py-1 text-xs font-medium text-[#B8FF3C]">
@@ -287,7 +287,7 @@ export default function AssetsPage() {
                 </div>
 
                 {/* Token Address */}
-                <div className="rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                <div className="rounded-2xl border border-white/5 bg-white/3 px-4 py-3">
                   <p className="text-[11px] text-[#889098]">Token Address</p>
                   <p className="mt-1 break-all font-mono text-xs leading-5 text-white/80">
                     {merchantAsset.tokenAddress}
@@ -296,14 +296,14 @@ export default function AssetsPage() {
 
                 {/* Decimals + Status + Risk */}
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/3 px-3 py-3 text-center">
                     <p className="text-[11px] text-[#889098]">Decimals</p>
                     <p className="mt-1 text-sm font-semibold text-white">
                       {merchantAsset.tokenDecimals}
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/3 px-3 py-3 text-center">
                     <p className="text-[11px] text-[#889098]">Status</p>
                     <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-[#B8FF3C]/10 px-2 py-0.5 text-[11px] text-[#B8FF3C]">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#B8FF3C]" />
@@ -311,7 +311,7 @@ export default function AssetsPage() {
                     </span>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3 text-center">
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/3 px-3 py-3 text-center">
                     <p className="text-[11px] text-[#889098]">Risk</p>
                     <span
                       className={`mt-1 rounded-full px-2 py-0.5 text-[11px] ${

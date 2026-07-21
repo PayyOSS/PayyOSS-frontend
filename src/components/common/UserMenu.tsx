@@ -51,6 +51,8 @@ export function UserMenu({
         name: data.merchant.name,
         imageUrl: data.merchant.imageUrl,
         email: data.merchant.email,
+        companyUrl: data.merchant.companyUrl,
+        createdAt: data.merchant.createdAt,
         environment: data.merchant.environment,
         status: data.merchant.status,
         businessType: data.merchant.businessType,

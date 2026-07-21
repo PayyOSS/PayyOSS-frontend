@@ -21,6 +21,8 @@ export interface CreateMerchantDto {
   name?: string;
   imageUrl?: string;
   email?: string;
+  companyUrl?: string;
+  createdAt?: string | null;
   environment?: ApiEnvironment;
   status?: MerchantStatus;
   businessType?: BusinessType;
@@ -38,6 +40,8 @@ const initialMerchantState: CreateMerchantDto = {
   name: "",
   imageUrl: "",
   email: "",
+  companyUrl: "",
+  createdAt: null,
   environment: ApiEnvironment.TEST,
   status: MerchantStatus.ACTIVE,
   businessType: BusinessType.INDIVIDUAL,
