@@ -5,7 +5,6 @@ import {
   LayoutDashboardIcon,
   Store,
   Wallet,
-  Webhook,
   Workflow,
 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -21,28 +20,32 @@ interface prop {
 const Sidebar = ({ sidebar, setSidebar }: prop) => {
   const pathname = usePathname();
   const router = useRouter();
+  const params = useParams<{ marchentId: string; mode: string }>();
   const merchant = useMerchantStore((state) => state.merchant);
+  const merchantId = params.marchentId || merchant.id;
+  const mode = params.mode || merchant.environment?.toLowerCase();
+  const basePath = merchantId && mode ? `/${merchantId}/${mode}` : "";
 
   const navItems = [
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/merchant`, label: "Merchant", Icon: Store },
+    { to: `${basePath}/dashboard`, label: "Dashboard", Icon: LayoutDashboardIcon },
+    { to: `${basePath}/transaction`, label: "Transaction", Icon: ArrowLeftRightIcon },
+    { to: `${basePath}/merchant`, label: "Merchant", Icon: Store },
   ];
 
   const manageNavitem = [
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/wallet`, label: "Wallet", Icon: Wallet },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/assets`, label: "Assets", Icon: Layers },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/api-key`, label: "Api-key", Icon: KeyRound },
-    { to: `/${merchant?.id}/${merchant?.environment?.toLowerCase()}/webhook`, label: "Webhook", Icon: Workflow },
+    { to: `${basePath}/wallet`, label: "Wallet", Icon: Wallet },
+    { to: `${basePath}/assets`, label: "Assets", Icon: Layers },
+    { to: `${basePath}/api-key`, label: "Api-key", Icon: KeyRound },
+    { to: `${basePath}/webhook`, label: "Webhook", Icon: Workflow },
 
   ]
 
   useEffect(() => {
-  if (!merchant?.id) return;
-  navItems.forEach(({ to }) => {
+  if (!basePath) return;
+  [...navItems, ...manageNavitem].forEach(({ to }) => {
     router.prefetch(to); // ✅ just `to`, not `basePath/to`
   });
-}, []);
+}, [basePath, router]);
 
   return (
     <div
@@ -60,6 +63,8 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 href={to}
                 key={to}
                 prefetch={true}
+                onMouseEnter={() => router.prefetch(to)}
+                onFocus={() => router.prefetch(to)}
                 onClick={() => setSidebar(false)}
                 className={
                   isActive
@@ -86,6 +91,8 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
                 href={to}
                 key={to}
                 prefetch={true}
+                onMouseEnter={() => router.prefetch(to)}
+                onFocus={() => router.prefetch(to)}
                 onClick={() => setSidebar(false)}
                 className={
                   isActive

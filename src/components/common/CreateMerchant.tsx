@@ -108,7 +108,7 @@ export default function CreateMerchantForm() {
         toast.error("Failed to create merchant. Please try again.");
       }
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
