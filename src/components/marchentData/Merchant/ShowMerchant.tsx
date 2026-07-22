@@ -23,6 +23,8 @@ import {
   useMerchantStore,
 } from "@/stores/useMerchantStore";
 import MerchantLoder from "./MerchantLoder";
+import UpdateMerchant from "./UpdateMerchant";
+import DeleteMerchant from "./DeleteMerchant";
 
 interface MerchantResponse {
   success: boolean;
@@ -32,11 +34,18 @@ interface MerchantResponse {
 
 export default function ShowMerchant() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const merchant = useMerchantStore((state) => state.merchant);
   const setMerchant = useMerchantStore((state) => state.setMerchant);
   const resetMerchant = useMerchantStore((state) => state.resetMerchant);
 
   useEffect(() => {
+    if (merchant.id) {
+      setIsLoading(false);
+      return;
+    }
+
     let isCancelled = false;
 
     const fetchMerchant = async () => {
@@ -77,7 +86,7 @@ export default function ShowMerchant() {
     return () => {
       isCancelled = true;
     };
-  }, [resetMerchant, setMerchant]);
+  }, [merchant.id, resetMerchant, setMerchant]);
 
   if (isLoading) return <MerchantLoder />;
 
@@ -156,6 +165,7 @@ export default function ShowMerchant() {
             <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
               <button
                 type="button"
+                onClick={() => setIsEditOpen(true)}
                 className="group inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/2 px-4 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#B8FF3C]/35 hover:bg-[#B8FF3C]/8 hover:text-[#B8FF3C] hover:shadow-[0_8px_24px_rgba(184,255,60,0.10)] active:translate-y-0 active:scale-95"
               >
                 <Pencil
@@ -167,6 +177,7 @@ export default function ShowMerchant() {
 
               <button
                 type="button"
+                onClick={() => setIsDeleteOpen(true)}
                 className="group inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-500/40 bg-red-500/5 px-4 text-sm font-medium text-red-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-400/70 hover:bg-red-500/12 hover:text-red-300 hover:shadow-[0_8px_24px_rgba(239,68,68,0.13)] active:translate-y-0 active:scale-95"
               >
                 <Trash2
@@ -255,6 +266,15 @@ export default function ShowMerchant() {
           </div>
         </section>
       </div>
+
+      <UpdateMerchant
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+      />
+      <DeleteMerchant
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+      />
     </div>
   );
 }
