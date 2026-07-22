@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Globe2, Mail, Upload, Loader2 } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Check,
+  Globe2,
+  Loader2,
+  Mail,
+  Upload,
+} from "lucide-react";
 import api from "@/config/axios";
 import { useMerchantStore } from "@/stores/useMerchantStore";
 import { useRouter } from "next/navigation";
@@ -91,163 +99,224 @@ export default function CreateMerchantForm() {
   };
 
   return (
-  <form
-    onSubmit={handleSubmit}
-    className="w-full max-w-xl rounded-[28px] border border-white/10 bg-black/80 p-8 backdrop-blur-3xl shadow-[0_0_80px_rgba(184,255,60,0.08)]"
-  >
-    {/* Logo */}
-    <div className="flex flex-col items-center">
-      <label className="group relative flex h-28 w-28 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed border-[#b8ff3c]/30 bg-white/[0.03] transition-all duration-300 hover:border-[#b8ff3c] hover:bg-[#b8ff3c]/10">
-        {logo ? (
-          <>
-            <img
-              src={logo}
-              alt="Business logo"
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100">
-              <Upload className="h-7 w-7 text-[#b8ff3c]" />
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center gap-1">
-            <Upload className="h-7 w-7 text-[#b8ff3c]" />
-            <span className="text-[11px] text-zinc-400">
-              Upload Logo
+    <form
+      onSubmit={handleSubmit}
+      className="relative z-10 grid max-h-full w-full max-w-5xl overflow-hidden rounded-[26px] border border-white/10 bg-[#070a09]/95 shadow-[0_30px_100px_rgba(0,0,0,0.72),0_0_70px_rgba(184,255,60,0.05)] backdrop-blur-3xl lg:grid-cols-[0.72fr_1.28fr]"
+    >
+      <div className="pointer-events-none absolute inset-x-20 top-0 h-px bg-linear-to-r from-transparent via-[#b8ff3c]/80 to-transparent" />
+
+      <aside className="relative flex items-center justify-between gap-4 border-b border-white/8 bg-[radial-gradient(circle_at_15%_10%,rgba(184,255,60,0.12),transparent_48%),linear-gradient(145deg,#0d120c,#070907)] px-5 py-4 lg:flex-col lg:items-start lg:justify-between lg:border-r lg:border-b-0 lg:p-7">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-9 place-items-center rounded-xl bg-[#b8ff3c] text-xl font-black text-[#111804] shadow-[0_0_24px_rgba(184,255,60,0.2)]">
+              P
             </span>
-          </div>
-        )}
-
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleLogoChange}
-        />
-      </label>
-
-      <p className="mt-3 text-xs text-zinc-500">
-        Add your business logo (max 2 MB)
-      </p>
-    </div>
-
-    <div className="mt-8 space-y-5">
-      {/* Business Name */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-zinc-300">
-          Business Name
-        </label>
-
-        <div className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/3 px-4 py-3 transition-all duration-300 focus-within:border-[#b8ff3c]/70 focus-within:bg-[#b8ff3c]/10">
-          <Building2 className="h-5 w-5 text-zinc-500" />
-
-          <input
-            type="text"
-            name="name"
-            placeholder="Acme Inc."
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
-          />
-        </div>
-      </div>
-
-      {/* Email */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-zinc-300">
-          Business Email
-        </label>
-
-        <div className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/3 px-4 py-3 transition-all duration-300 focus-within:border-[#b8ff3c]/70 focus-within:bg-[#b8ff3c]/10">
-          <Mail className="h-5 w-5 text-zinc-500" />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="hello@company.com"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
-          />
-        </div>
-      </div>
-
-      {/* Company URL */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-zinc-300">
-          Company URL <span className="font-normal text-zinc-500">(Optional)</span>
-        </label>
-
-        <div className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/3 px-4 py-3 transition-all duration-300 focus-within:border-[#b8ff3c]/70 focus-within:bg-[#b8ff3c]/10">
-          <Globe2 className="h-5 w-5 shrink-0 text-zinc-500" />
-
-          <input
-            type="url"
-            name="companyUrl"
-            inputMode="url"
-            autoComplete="url"
-            placeholder="https://company.com"
-            value={formData.companyUrl}
-            onChange={handleChange}
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
-          />
-        </div>
-
-        <p className="mt-1.5 text-xs text-zinc-500">
-          Include https:// at the beginning of the URL.
-        </p>
-      </div>
-
-      {/* Business Type */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-zinc-300">
-          Business Type
-        </label>
-
-        <div className="grid grid-cols-2 gap-3">
-          {Object.values(BusinessType).map((type) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  businessType: type,
-                }))
-              }
-              className={`rounded-2xl border p-3 text-left transition-all duration-300 cursor-pointer ${
-                formData.businessType === type
-                  ? "border-[#b8ff3c] bg-[#b8ff3c]/20 shadow-lg shadow-[#b8ff3c]/20"
-                  : "border-white/10 bg-white/3 hover:border-[#b8ff3c]/40 hover:bg-[#b8ff3c]/10"
-              }`}
-            >
-              <h3 className="text-sm font-medium text-white">
-                {type.replace("_", " ")}
-              </h3>
-
-              <p className="mt-1 text-[11px] text-zinc-500">
-                {type === "INDIVIDUAL" && "Personal business"}
-                {type === "COMPANY" && "Registered company"}
-                {type === "STARTUP" && "New startup"}
-                {type === "NON_PROFIT" && "Organization"}
+            <div>
+              <p className="text-base font-semibold tracking-tight text-white">
+                Payy<span className="text-[#b8ff3c]">OSS</span>
               </p>
-            </button>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                Merchant onboarding
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 hidden lg:block">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#b8ff3c]">
+              Get started
+            </p>
+            <h1 className="mt-2 max-w-xs text-3xl font-semibold leading-tight tracking-[-0.035em] text-white">
+              Create your merchant workspace.
+            </h1>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-zinc-400">
+              Add your business identity and start accepting secure crypto payments.
+            </p>
+          </div>
+        </div>
+
+        <div className="hidden lg:grid lg:gap-2.5">
+          {["Secure checkout", "Multi-chain ready", "Built for global payments"].map((item) => (
+            <div key={item} className="flex items-center gap-2 text-xs text-zinc-400">
+              <span className="grid size-5 place-items-center rounded-full bg-[#b8ff3c]/10 text-[#b8ff3c]">
+                <Check size={12} strokeWidth={3} />
+              </span>
+              {item}
+            </div>
           ))}
         </div>
-      </div>
+      </aside>
 
-      {/* Submit */}
-      <button
-        disabled={loading}
-        className="flex h-12 w-full cursor-pointer items-center justify-center rounded-2xl bg-linear-to-r from-[#91d320] to-[#86bd06] text-sm font-semibold text-black shadow-xl shadow-[#b8ff3c]/20 transition-all duration-300 hover:scale-[1.01] active:scale-[0.98]"
-      >
-        {loading ? (
-          <Loader2 className="h-5 w-5 animate-spin" />
-        ) : (
-          "Create Merchant"
-        )}
-      </button>
-    </div>
-  </form>
-);
+      <section className="min-h-0 px-5 py-4 sm:px-7 sm:py-5 lg:px-8 lg:py-7">
+        <div className="text-center">
+          <label
+            title="Upload business logo"
+            className="group relative mx-auto flex size-16 cursor-pointer items-center justify-center overflow-hidden rounded-[22px] border border-dashed border-[#b8ff3c]/45 bg-[linear-gradient(145deg,rgba(184,255,60,0.1),rgba(184,255,60,0.025))] shadow-[0_12px_35px_rgba(184,255,60,0.1)] transition duration-300 hover:-translate-y-0.5 hover:border-[#b8ff3c] hover:shadow-[0_16px_42px_rgba(184,255,60,0.16)] sm:size-20"
+          >
+            {logo ? (
+              <>
+                <img
+                  src={logo}
+                  alt="Business logo preview"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 grid place-items-center bg-black/70 opacity-0 transition group-hover:opacity-100">
+                  <div className="flex flex-col items-center gap-1 text-[#b8ff3c]">
+                    <Upload className="size-5" />
+                    <span className="text-[9px] font-medium">Change</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center gap-1.5 text-zinc-400 transition group-hover:text-[#b8ff3c]">
+                <Upload className="size-5 sm:size-6" />
+                <span className="text-[9px] font-medium sm:text-[10px]">Add logo</span>
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleLogoChange}
+            />
+          </label>
+          <p className="mt-1.5 text-[9px] text-zinc-600 sm:text-[10px]">
+            PNG, JPG or WebP · Max 2 MB
+          </p>
+          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#b8ff3c] sm:text-xs">
+            Business details
+          </p>
+          <h2 className="mt-0.5 text-lg font-semibold tracking-tight text-white sm:text-xl">
+            Set up your account
+          </h2>
+        </div>
+
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <FormField label="Business name" icon={<Building2 size={17} />}>
+            <input
+              required
+              type="text"
+              name="name"
+              autoComplete="organization"
+              placeholder="Acme Inc."
+              value={formData.name}
+              onChange={handleChange}
+              className={inputClassName}
+            />
+          </FormField>
+
+          <FormField label="Business email" icon={<Mail size={17} />}>
+            <input
+              required
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="hello@company.com"
+              value={formData.email}
+              onChange={handleChange}
+              className={inputClassName}
+            />
+          </FormField>
+
+          <div className="sm:col-span-2">
+            <FormField label="Company URL" optional icon={<Globe2 size={17} />}>
+              <input
+                type="url"
+                name="companyUrl"
+                inputMode="url"
+                autoComplete="url"
+                placeholder="https://company.com"
+                value={formData.companyUrl}
+                onChange={handleChange}
+                className={inputClassName}
+              />
+            </FormField>
+          </div>
+        </div>
+
+        <fieldset className="mt-4">
+          <legend className="text-xs font-medium text-zinc-300">Business type</legend>
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {Object.values(BusinessType).map((type) => {
+              const selected = formData.businessType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setFormData((prev) => ({ ...prev, businessType: type }))}
+                  className={`relative min-h-13 cursor-pointer rounded-xl border px-2.5 py-2 text-left transition-all duration-200 ${
+                    selected
+                      ? "border-[#b8ff3c]/70 bg-[#b8ff3c]/12 text-white shadow-[0_0_22px_rgba(184,255,60,0.08)]"
+                      : "border-white/8 bg-white/[0.025] text-zinc-400 hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+                  }`}
+                >
+                  <span className="block pr-4 text-[11px] font-semibold leading-tight sm:text-xs">
+                    {formatBusinessType(type)}
+                  </span>
+                  {selected && (
+                    <span className="absolute right-2 top-2 grid size-4 place-items-center rounded-full bg-[#b8ff3c] text-black">
+                      <Check size={10} strokeWidth={3} />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/8 pt-4">
+          <p className="hidden max-w-xs text-[11px] leading-5 text-zinc-500 sm:block">
+            By continuing, you confirm that these business details are accurate.
+          </p>
+          <button
+            type="submit"
+            disabled={loading || !formData.businessType}
+            className="group flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#b8ff3c] px-6 text-sm font-semibold text-[#101700] shadow-[0_10px_28px_rgba(184,255,60,0.16)] transition hover:-translate-y-0.5 hover:bg-[#c4ff5b] active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45 sm:w-auto"
+          >
+            {loading ? (
+              <><Loader2 className="size-4 animate-spin" /> Creating...</>
+            ) : (
+              <>Create merchant <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" /></>
+            )}
+          </button>
+        </div>
+      </section>
+    </form>
+  );
+}
+
+const inputClassName =
+  "h-10 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600";
+
+function FormField({
+  label,
+  icon,
+  optional = false,
+  children,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  optional?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-zinc-300">
+        {label}
+        {optional && <span className="font-normal text-zinc-600">(optional)</span>}
+      </span>
+      <span className="flex h-11 items-center gap-3 rounded-xl border border-white/9 bg-white/[0.025] px-3 text-zinc-500 transition focus-within:border-[#b8ff3c]/55 focus-within:bg-[#b8ff3c]/5 focus-within:text-[#b8ff3c] focus-within:ring-2 focus-within:ring-[#b8ff3c]/5">
+        {icon}
+        {children}
+      </span>
+    </label>
+  );
+}
+
+function formatBusinessType(type: BusinessType) {
+  return type
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
