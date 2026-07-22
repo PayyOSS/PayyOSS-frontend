@@ -140,7 +140,7 @@ export default function DeleteMerchant({
             : "Failed to delete the merchant.",
         );
       }
-      setIsDeleting(false);
+    //   setIsDeleting(false);
     }
   };
 

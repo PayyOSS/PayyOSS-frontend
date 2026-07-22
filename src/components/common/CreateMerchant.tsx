@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -13,6 +14,7 @@ import {
 import api from "@/config/axios";
 import { useMerchantStore } from "@/stores/useMerchantStore";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 enum BusinessType {
   INDIVIDUAL = "INDIVIDUAL",
@@ -76,23 +78,35 @@ export default function CreateMerchantForm() {
 
       const { data } = await api.post("merchant/create", payload);
 
-      if(data?.success){
-        setMerchant({
-          id: data.merchant.id,
-          name: data.merchant.name,
-          imageUrl: data.merchant.imageUrl,
-          email: data.merchant.email,
-          companyUrl: data.merchant.companyUrl,
-          createdAt: data.merchant.createdAt,
-          environment: data.merchant.environment,
-          status: data.merchant.status,
-          businessType: data.merchant.businessType,
-        });
-        router.push(`/${data.merchant.id}/${data.merchant.environment.toLowerCase()}/dashboard`);
-        console.log(data);
+      if (!data?.success) {
+        toast.error(data?.message || "Failed to create merchant.");
+        return;
       }
+
+      setMerchant({
+        id: data.merchant.id,
+        name: data.merchant.name,
+        imageUrl: data.merchant.imageUrl,
+        email: data.merchant.email,
+        companyUrl: data.merchant.companyUrl,
+        createdAt: data.merchant.createdAt,
+        environment: data.merchant.environment,
+        status: data.merchant.status,
+        businessType: data.merchant.businessType,
+      });
+      toast.success("Merchant created successfully.");
+      router.push(`/${data.merchant.id}/${data.merchant.environment.toLowerCase()}/dashboard`);
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        const responseMessage = error.response?.data?.message;
+        toast.error(
+          (Array.isArray(responseMessage)
+            ? responseMessage.join(" ")
+            : responseMessage) || "Failed to create merchant. Please try again.",
+        );
+      } else {
+        toast.error("Failed to create merchant. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
