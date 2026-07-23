@@ -16,6 +16,6 @@ export const config = {
   matcher: [
     "/[merchantId]/[mode]",
     "/create_marchent",
-    "/((?!_next/static|_next/image|favicon.ico)[^/]+/[^/]+/.+)",
+    "/((?!_next/static|_next/image|favicon.ico|Documentation(?:/|$))[^/]+/[^/]+/.+)",
   ],
 };

@@ -1,12 +1,7 @@
-import Documentation from '@/components/marchentData/Documentation'
-import React from 'react'
+import { redirect } from "next/navigation";
 
 const page = () => {
-  return (
-    <div>
-      <Documentation />
-    </div>
-  )
-}
+  redirect("/Documentation/introcuction");
+};
 
-export default page
+export default page;
