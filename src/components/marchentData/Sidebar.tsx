@@ -1,5 +1,6 @@
 import {
   ArrowLeftRightIcon,
+  Dock,
   KeyRound,
   Layers,
   LayoutDashboardIcon,
@@ -37,8 +38,9 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
     { to: `${basePath}/assets`, label: "Assets", Icon: Layers },
     { to: `${basePath}/api-key`, label: "Api-key", Icon: KeyRound },
     { to: `${basePath}/webhook`, label: "Webhook", Icon: Workflow },
-
   ]
+
+  
 
   useEffect(() => {
   if (!basePath) return;
@@ -105,6 +107,14 @@ const Sidebar = ({ sidebar, setSidebar }: prop) => {
               </Link>
             );
           })}
+
+          <Link
+                href="/Documentation"
+                className={ "text-[#b8ff3c]/40 font-medium w-full px-6 py-2 flex items-center gap-3 rounded-xl hover:bg-[#b8ff3c]/10 hover:text-[#b8ff3c] mt-2.5 active:scale-95 active:bg-[#b8ff3c]/20 transition-transform duration-150"}
+              >
+                <Dock className="w-5 h-5" />
+                <span>Doc</span>
+            </Link>
         </div>
         </div>
       </div>
