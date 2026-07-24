@@ -12,8 +12,8 @@ export function PayyossDocs({
   page = "introduction"
 }: PayyossDocsProps) {
   return (
-    <div className="min-h-screen bg-[#020a0f] text-white">
-      <div className="flex min-h-screen max-lg:flex-col">
+    <div className="min-h-screen bg-[#020a0f] text-white lg:h-screen lg:overflow-hidden">
+      <div className="flex min-h-screen max-lg:flex-col lg:h-screen lg:pl-[320px]">
         <DocsSidebar currentPath={currentPath} />
         <DocsContent page={page} />
       </div>

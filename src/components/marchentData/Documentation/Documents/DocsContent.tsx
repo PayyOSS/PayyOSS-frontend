@@ -12,7 +12,7 @@ export function DocsContent({ page }: DocsContentProps) {
   }
 
   return (
-    <main className="flex-1 overflow-hidden bg-[#020a0f] px-6 py-6 text-white lg:px-9">
+    <main className="min-w-0 flex-1 bg-[#020a0f] px-6 py-6 text-white lg:h-screen lg:overflow-y-auto lg:px-9">
       <div className="mb-3 flex justify-end">
         <a
           className="inline-flex h-11 items-center gap-3 rounded-lg border border-white/15 bg-white/[0.03] px-4 font-medium shadow-[0_12px_40px_rgba(0,0,0,0.25)] transition hover:border-[#b8ff00]/60"
@@ -150,8 +150,20 @@ const guidePages = {
       },
       {
         title: "Create a client",
-        body: "Initialize one reusable client with your API key. Keep secret keys on the server and outside your source code.",
+        body: "Initialize one reusable server-side client with your PayyOSS API key. Keep the key in an environment variable and never expose it in browser code.",
         code: codeSample
+      },
+      {
+        title: "Send the customer to checkout",
+        body: "checkout.create returns the hosted checkout URL. Redirect the customer to this URL to complete the payment.",
+        code: `const payment = await payyoss.checkout.create({
+  amount: "25.00",
+  successUrl: "https://merchant.com/payment/success",
+  cancelUrl: "https://merchant.com/payment/cancel",
+  metadata: { orderId: "order_123" },
+});
+
+response.redirect(303, payment.checkoutUrl);`
       }
     ],
     nextHref: "/Documentation/webhook/overview",
@@ -164,18 +176,47 @@ const guidePages = {
       "Receive real-time notifications when payments and transactions change state.",
     sections: [
       {
-        title: "Create an endpoint",
-        body: "Expose an HTTPS endpoint that accepts POST requests, validates each event, and responds with a successful status code.",
-        code: `app.post("/webhooks/payyoss", async (request, response) => {
-  const event = request.body;
+        title: "Verify signed events",
+        body: "PayyOSS signs the exact request bytes. Use express.raw for this route and verify the raw body before reading or processing the event.",
+        code: `import express from "express";
+import PayyOSS, { WebhookEventTypes } from "payyoss";
 
-  await handlePayyossEvent(event);
-  response.sendStatus(200);
-});`
+const app = express();
+const payyoss = new PayyOSS({
+  apiKey: process.env.PAYYOSS_API_KEY!,
+});
+
+app.post(
+  "/webhooks/payyoss",
+  express.raw({ type: "application/json" }),
+  async (request, response) => {
+    try {
+      const event = payyoss.webhooks.verify(
+        request.body,
+        request.headers["payyoss-signature"] as string,
+        request.headers["payyoss-timestamp"] as string,
+        process.env.PAYYOSS_WEBHOOK_SECRET!,
+      );
+
+      switch (event.type) {
+        case WebhookEventTypes.PAYMENT_CONFIRMED:
+          await markOrderAsPaid(event.data);
+          break;
+        case WebhookEventTypes.PAYMENT_FAILED:
+          await markOrderAsFailed(event.data);
+          break;
+      }
+
+      return response.json({ received: true });
+    } catch {
+      return response.sendStatus(400);
+    }
+  },
+);`
       },
       {
         title: "Process events safely",
-        body: "Acknowledge events quickly, store the event ID, and make your handler idempotent so duplicate deliveries do not repeat business actions."
+        body: "Verification checks the HMAC signature, timestamp tolerance, JSON payload, and supported event type. Store event.id and make processing idempotent because the same delivery can arrive more than once."
       }
     ],
     nextHref: "/Documentation/webhook/retry-policy",
@@ -185,22 +226,27 @@ const guidePages = {
     eyebrow: "Webhook",
     title: "Retry Policy",
     description:
-      "Design your webhook handler to remain reliable when an event must be delivered more than once.",
+      "PayyOSS automatically retries webhook deliveries when your endpoint cannot accept an event.",
     sections: [
       {
-        title: "When delivery is retried",
-        body: "A delivery may be attempted again when your endpoint times out or returns a non-success response. Return a 2xx response only after the event has been accepted."
+        title: "How retries work",
+        body: "The PayyOSS gateway stores each webhook delivery and sends it through a Redis-backed queue. The first delivery is attempted immediately. If it fails, PayyOSS retries after 1 minute, 5 minutes, 30 minutes, and 2 hours, for a maximum of five delivery attempts.",
+        code: undefined
       },
       {
-        title: "Handle duplicate events",
-        body: "Persist each event ID before processing it. If the same ID arrives again, acknowledge it without repeating the original action.",
-        code: `if (await events.has(event.id)) {
-  return response.sendStatus(200);
-}
-
-await events.save(event.id);
-await processEvent(event);
-return response.sendStatus(200);`
+        title: "When PayyOSS retries",
+        body: "A delivery is retried when the merchant endpoint cannot be reached, takes longer than 10 seconds to respond, or returns a non-2xx HTTP status. A successful 2xx response marks the delivery as delivered and stops further attempts. Disabled webhook endpoints are not retried.",
+        code: undefined
+      },
+      {
+        title: "What the SDK handles",
+        body: "The TypeScript SDK does not schedule deliveries, retry failed requests, or store duplicate event IDs. Creating a PayyOSS client automatically initializes its webhook verifier. The verifier validates the signature, timestamp, payload shape, and supported event type before returning the event to your handler. Its timestamp tolerance defaults to 300 seconds and can be changed with the webhookToleranceSeconds client option.",
+        code: undefined
+      },
+      {
+        title: "Merchant endpoint responsibility",
+        body: "Return a 2xx response only after accepting the event. Return a non-2xx response when processing cannot continue and you want the gateway to retry. Because retries deliver the same event ID again, merchants should ensure that processing the same event more than once does not repeat a payment-related action.",
+        code: undefined
       }
     ],
     nextHref: "/Documentation/sdk/typescript",
@@ -226,7 +272,7 @@ function GuideContent({
   const guide = guidePages[page];
 
   return (
-    <main className="flex-1 overflow-hidden bg-[#020a0f] px-6 py-6 text-white lg:px-9">
+    <main className="min-w-0 flex-1 bg-[#020a0f] px-6 py-6 text-white lg:h-screen lg:overflow-y-auto lg:px-9">
       <div className="mb-3 flex justify-end">
         <a
           className="inline-flex h-11 items-center gap-3 rounded-lg border border-white/15 bg-white/[0.03] px-4 font-medium shadow-[0_12px_40px_rgba(0,0,0,0.25)] transition hover:border-[#b8ff00]/60"

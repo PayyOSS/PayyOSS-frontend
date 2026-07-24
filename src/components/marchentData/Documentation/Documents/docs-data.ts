@@ -84,15 +84,23 @@ export const supportCards = [
   }
 ];
 
-export const codeSample = `import PayyOSS from 'payyoss';
+export const codeSample = `import PayyOSS from "payyoss";
 
 const payyoss = new PayyOSS({
-  apiKey: 'pk_test_1234567890',
-  environment: 'test',
+  apiKey: process.env.PAYYOSS_API_KEY!,
 });
 
-const response = await payyoss.transactions.list();
-console.log(response.data);`;
+const payment = await payyoss.checkout.create({
+  amount: "25.00",
+  successUrl: "https://merchant.com/payment/success",
+  cancelUrl: "https://merchant.com/payment/cancel",
+  customerEmail: "customer@example.com",
+  metadata: {
+    orderId: "order_123",
+  },
+});
+
+console.log(payment.checkoutUrl);`;
 
 export const BookIcon = BookOpen;
 export const CheckIcon = CheckCircle2;

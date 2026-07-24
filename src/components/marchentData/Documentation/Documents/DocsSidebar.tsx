@@ -1,4 +1,4 @@
-﻿import { ChevronDown, ExternalLink, Search } from "lucide-react";
+﻿import { ChevronDown, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { sidebarSections, supportCards } from "./docs-data";
 
@@ -10,7 +10,7 @@ export function DocsSidebar({ currentPath }: DocsSidebarProps) {
   const HelpIcon = supportCards[0].icon;
 
   return (
-    <aside className="flex min-h-screen w-full max-w-[320px] flex-col border-r border-white/10 bg-[#061016]/95 px-4 py-8 text-white shadow-[22px_0_80px_rgba(0,0,0,0.32)] max-lg:min-h-0 max-lg:max-w-none max-lg:border-b max-lg:border-r-0">
+    <aside className="flex min-h-screen w-full max-w-[320px] flex-col overflow-y-auto border-r border-white/10 bg-[#061016]/95 px-4 py-8 text-white shadow-[22px_0_80px_rgba(0,0,0,0.32)] lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:h-screen max-lg:min-h-0 max-lg:max-w-none max-lg:border-b max-lg:border-r-0">
       <Link
         className="mb-9 flex items-center gap-4 px-3"
         href="/Documentation/introcuction"
@@ -24,12 +24,6 @@ export function DocsSidebar({ currentPath }: DocsSidebarProps) {
           PayyOSS <span className="text-[#b8ff00]">Docs</span>
         </span>
       </Link>
-
-      <label className="mb-6 flex h-12 items-center gap-3 rounded-lg border border-white/15 bg-white/[0.03] px-3 text-white/60">
-        <Search className="size-5" />
-        <span className="flex-1 text-sm">Search docs...</span>
-        <kbd className="rounded text-xs text-white/50">Ctrl K</kbd>
-      </label>
 
       <nav className="space-y-2">
         {sidebarSections.map((section) => {
