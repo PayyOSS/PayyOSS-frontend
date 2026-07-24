@@ -12,7 +12,9 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      const redirectTo = encodeURIComponent(pathname);
+      const redirectTo = encodeURIComponent(
+        new URL(pathname, window.location.origin).toString(),
+      );
       router.replace(`/auth/sign-in?redirectTo=${redirectTo}`);
     }
   }, [isPending, pathname, router, session?.user]);

@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const clientOrigin =
+    typeof window === "undefined" ? "/" : window.location.origin;
+
   return (
     <AuthUIProvider
       authClient={authClient}
@@ -16,7 +19,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         providers: ["google", "github"],
       }}
       navigate={router.push}
-      redirectTo="/"
+      redirectTo={clientOrigin}
     >
       {children}
     </AuthUIProvider>
