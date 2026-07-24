@@ -1,8 +1,6 @@
 "use client"
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { UserMenu } from "@/components/common/UserMenu";
+import { AuthGuard } from "@/components/common/AuthGuard";
 import Sidebar from "@/components/marchentData/Sidebar";
-import { authClient } from "@/lib/auth-client";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,7 +13,6 @@ export default function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session } = authClient.useSession();
   const router = useRouter();
   const { merchantWallet } = useMerchantWalletStore();
   const merchant = useMerchantStore((state) => state.merchant);
@@ -26,7 +23,8 @@ export default function Layout({
   const label = merchantWallet?.walletAddress ? merchantWallet.walletAddress.slice(0, 6) + "..." + merchantWallet.walletAddress.slice(-4) : "Connect wallet";
 
   return (
-    <div className="fixed inset-0 flex h-screen flex-col items-start justify-start overflow-hidden">
+    <AuthGuard>
+      <div className="fixed inset-0 flex h-screen flex-col items-start justify-start overflow-hidden">
       {/* ALWAYS visible */}
 
     <nav className='w-full py-3 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between bg-black'>
@@ -68,6 +66,7 @@ export default function Layout({
         {children}
       </div>
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

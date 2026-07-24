@@ -15,8 +15,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       social={{
         providers: ["google", "github"],
       }}
-      navigate={router.push} // tells AuthUIProvider how to navigate (Next.js router)
-      redirectTo={process.env.CLIENT_URL} // where to send users after successful login
+      navigate={router.push}
+      redirectTo="/"
     >
       {children}
     </AuthUIProvider>
