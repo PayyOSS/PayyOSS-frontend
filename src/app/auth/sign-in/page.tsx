@@ -3,6 +3,9 @@
 import { AuthView } from "@daveyplate/better-auth-ui";
 import { ArrowLeft, Check, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { authClient } from "@/lib/auth-client";
 
 const trustPoints = [
   "Secure merchant authentication",
@@ -11,6 +14,25 @@ const trustPoints = [
 ];
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
+
+  useEffect(() => {
+    if (session?.user) {
+      router.replace("/");
+    }
+  }, [router, session?.user]);
+
+  if (isPending || session?.user) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-[#030604] text-white">
+        <p className="text-sm text-white/60">
+          {session?.user ? "Redirecting..." : "Checking your session..."}
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#030604] text-white">
       <div
