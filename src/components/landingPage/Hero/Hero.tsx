@@ -28,15 +28,60 @@ export function Hero() {
     () => {
       const media = gsap.matchMedia();
 
-      media.add("(prefers-reduced-motion: no-preference)", () => {
+      media.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        const dashboardTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: "[data-hero-dashboard]",
+            start: "top 100%",
+            end: "top 28%",
+            scrub: 0.7,
+            invalidateOnRefresh: true
+          }
+        });
+
+        dashboardTimeline
+          .fromTo(
+            "[data-hero-dashboard]",
+            {
+              scale: 0.56,
+              y: 230,
+              z: -850,
+              rotateX: 20,
+              opacity: 0.08,
+              transformOrigin: "center top"
+            },
+            {
+              scale: 0.92,
+              y: 44,
+              z: -90,
+              rotateX: 4,
+              opacity: 0.88,
+              duration: 0.72,
+              ease: "power2.out",
+              force3D: true
+            }
+          )
+          .to("[data-hero-dashboard]", {
+            scale: 1,
+            y: 0,
+            z: 0,
+            rotateX: 0,
+            opacity: 1,
+            duration: 0.28,
+            ease: "power1.out",
+            force3D: true
+          });
+      });
+
+      media.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
           "[data-hero-dashboard]",
           {
-            scale: 0.78,
-            y: 125,
-            z: -180,
-            rotateX: 10,
-            opacity: 0.48,
+            scale: 0.72,
+            y: 120,
+            z: -420,
+            rotateX: 13,
+            opacity: 0.18,
             transformOrigin: "center top"
           },
           {
@@ -45,13 +90,13 @@ export function Hero() {
             z: 0,
             rotateX: 0,
             opacity: 1,
-            ease: "none",
+            ease: "power2.out",
             force3D: true,
             scrollTrigger: {
               trigger: "[data-hero-dashboard]",
-              start: "top 96%",
-              end: "top 47%",
-              scrub: 0.5,
+              start: "top 98%",
+              end: "top 52%",
+              scrub: 0.55,
               invalidateOnRefresh: true
             }
           }
@@ -112,7 +157,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="[perspective:1400px]">
+      <div className="[perspective:1200px] [perspective-origin:50%_15%]">
         <DashboardPreview />
       </div>
     </section>

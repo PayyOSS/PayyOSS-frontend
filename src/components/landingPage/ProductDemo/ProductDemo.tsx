@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Play } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./ProductDemo.module.css";
 import { TypewriterText } from "./TypewriterText";
 
@@ -14,8 +14,22 @@ const videoUrl = "https://cdn.pixabay.com/video/2026/03/02/337459_large.mp4";
 
 export function ProductDemo() {
   const section = useRef<HTMLElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
   const videoShown = useRef(false);
   const [showVideo, setShowVideo] = useState(false);
+
+  useEffect(() => {
+    if (!video.current) return;
+
+    if (showVideo) {
+      void video.current.play().catch(() => {
+        // Muted playback can still be blocked by browser-level preferences.
+      });
+      return;
+    }
+
+    video.current.pause();
+  }, [showVideo]);
 
   useGSAP(
     () => {
@@ -125,27 +139,31 @@ export function ProductDemo() {
               : "border-[#b8ff3c]/20 bg-[#9fdf30] p-2 shadow-[0_30px_90px_rgba(0,0,0,0.55)] sm:p-3"
           }`}
         >
-          {showVideo ? (
-            <>
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-[8%] bg-[#b8ff3c]/45 blur-[55px]"
-              />
-              <div className={`relative h-full w-full overflow-hidden rounded-[18px] bg-black/70 ${styles.videoReveal}`}>
-                <video
-                  key="payyoss-video"
-                  src={videoUrl}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className="block h-full w-full object-cover"
-                />
-              </div>
-            </>
-          ) : (
-            <div className="grid h-full w-full place-items-center rounded-[18px] bg-[#a8ed32] text-black">
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-[8%] bg-[#b8ff3c]/45 blur-[55px] transition-opacity duration-500 ${
+              showVideo ? "opacity-100" : "opacity-0"
+            }`}
+          />
+
+          <div className={`relative h-full w-full overflow-hidden rounded-[18px] bg-black/70 ${showVideo ? styles.videoReveal : ""}`}>
+            <video
+              ref={video}
+              src={videoUrl}
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className={`block h-full w-full object-cover transition-opacity duration-500 ${
+                showVideo ? "opacity-100" : "opacity-0"
+              }`}
+            />
+
+            <div
+              className={`absolute inset-0 grid place-items-center bg-[#a8ed32] text-black transition duration-500 ${
+                showVideo ? "invisible scale-[1.02] opacity-0" : "visible scale-100 opacity-100"
+              }`}
+            >
               <div className="text-center">
                 <span className="mx-auto grid size-14 place-items-center rounded-full border border-black/15 bg-black text-[#b8ff3c] shadow-xl">
                   <Play className="ml-0.5 size-5 fill-current" />
@@ -158,7 +176,7 @@ export function ProductDemo() {
                 </p>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         <TypewriterText active={showVideo} />
