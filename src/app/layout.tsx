@@ -6,8 +6,8 @@ import WalletProviders from "@/components/common/walletProviders";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "PayyOSS | Crypto gatway",
-  description: "A production-ready financial dashboard hero section built with Next.js.",
+  title: "PayyOSS | Crypto Payment Infrastructure",
+  description: "Accept stablecoin payments with a clean API, real-time transaction visibility, and secure webhook events.",
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",

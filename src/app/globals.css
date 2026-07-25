@@ -7,12 +7,19 @@
 html {
   background: #030403;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 
 a,
 button {
   -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #b8ff3c;
+  outline-offset: 4px;
 }
 
 ::-webkit-scrollbar {
@@ -31,4 +38,24 @@ button {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgb(184 255 60 / 0.5) transparent;
+}
+
+::selection {
+  background: rgb(184 255 60 / 0.25);
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
