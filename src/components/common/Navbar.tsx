@@ -3,6 +3,7 @@ import { authClient } from "@/lib/auth-client";
 import { UserButton } from "@daveyplate/better-auth-ui";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { UserMenu } from "./UserMenu";
 
@@ -45,14 +46,18 @@ export function Navbar() {
       aria-label="PayyOss primary navigation"
     >
       <a
-        className="navbar inline-flex w-fit items-center gap-2 text-sm font-bold leading-none"
-        href="#"
+        className="navbar inline-flex w-fit items-center"
+        href="/"
         aria-label="PayyOss home"
       >
-        <span className="grid size-8 md:size-10 place-items-center rounded-full bg-[#b8ff3c] text-2xl md:text-3xl font-black leading-none text-[#111804]">
-          P
-        </span>
-        <span className="text-xl md:text-2xl">PayyOSS</span>
+        <Image
+          src="/logobig.png"
+          alt="PayyOSS"
+          width={1284}
+          height={430}
+          priority
+          className="h-auto w-28 md:w-36"
+        />
       </a>
 
       <nav

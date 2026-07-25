@@ -3,6 +3,7 @@ import { AuthGuard } from "@/components/common/AuthGuard";
 import Sidebar from "@/components/marchentData/Sidebar";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMerchantStore } from "@/stores/useMerchantStore";
 import { useMerchantWalletStore } from "@/stores/useMerchantWalletStore";
@@ -28,16 +29,15 @@ export default function Layout({
       {/* ALWAYS visible */}
 
     <nav className='w-full py-3 px-3 md:px-8 max-h-17 sticky top-0 flex items-center justify-between bg-black'>
-        <a href="/" className="flex items-center gap-2">
-            <div className="relative">
-              <span className="grid size-8.5 place-items-center rounded-full bg-[#b8ff3c] text-2xl font-black leading-none text-[#111804]">
-                P
-              </span>
-            </div>
-            <span className="text-[15px] md:text-[20px] font-semibold tracking-tight">
-              <span className="text-foreground">Payy</span>
-              <span className="gradient-text-blue">OSS</span>
-            </span>
+        <a href="/" className="flex items-center" aria-label="PayyOSS home">
+            <Image
+              src="/logobig.png"
+              alt="PayyOSS"
+              width={1284}
+              height={430}
+              priority
+              className="h-auto w-28 md:w-32"
+            />
           </a>
 
           <div className='flex justify-center items-center gap-3 sm:gap-4'>

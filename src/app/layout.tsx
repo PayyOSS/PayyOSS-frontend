@@ -7,7 +7,12 @@ import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "PayyOSS | Crypto gatway",
-  description: "A production-ready financial dashboard hero section built with Next.js."
+  description: "A production-ready financial dashboard hero section built with Next.js.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png"
+  }
 };
 
 export default function RootLayout({

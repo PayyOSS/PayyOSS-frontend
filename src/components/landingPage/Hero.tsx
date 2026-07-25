@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/common/Navbar";
+import Image from "next/image";
 
 const ledgerItems = [
   { label: "Virtual Cards", value: "$22,430.80" },
@@ -80,14 +81,17 @@ function DashboardPreview() {
     >
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 py-4 max-lg:grid-cols-[1fr_auto] max-md:gap-3 max-md:px-4 max-md:py-3 max-sm:gap-2 max-sm:px-3 max-sm:py-2.5">
         <a
-          className="inline-flex w-fit items-center gap-2 text-xs font-bold leading-none"
-          href="#"
+          className="inline-flex w-fit items-center"
+          href="/"
           aria-label="PayyOSS overview"
         >
-          <span className="grid size-5.5 place-items-center rounded-full bg-[#b8ff3c] text-sm font-black leading-none text-[#111804]">
-            P
-          </span>
-          <span>PayyOSS</span>
+          <Image
+            src="/logobig.png"
+            alt="PayyOSS"
+            width={1284}
+            height={430}
+            className="h-auto w-18 max-sm:w-15"
+          />
         </a>
 
         <div

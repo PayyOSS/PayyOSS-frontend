@@ -1,4 +1,5 @@
 ﻿import { ChevronDown, ExternalLink } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { sidebarSections, supportCards } from "./docs-data";
 
@@ -12,16 +13,20 @@ export function DocsSidebar({ currentPath }: DocsSidebarProps) {
   return (
     <aside className="flex min-h-screen w-full max-w-[320px] flex-col overflow-y-auto border-r border-white/10 bg-[#061016]/95 px-4 py-8 text-white shadow-[22px_0_80px_rgba(0,0,0,0.32)] lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:h-screen max-lg:min-h-0 max-lg:max-w-none max-lg:border-b max-lg:border-r-0">
       <Link
-        className="mb-9 flex items-center gap-4 px-3"
+        className="mb-9 flex items-center px-3"
         href="/Documentation/introcuction"
+        aria-label="PayyOSS documentation home"
       >
-        <span className="relative grid size-12 place-items-center">
-          <span className="absolute h-11 w-2 rotate-[28deg] rounded-full bg-white" />
-          <span className="absolute bottom-2 left-1 h-2 w-2 rounded-full bg-[#b8ff00]" />
-          <span className="absolute bottom-2 right-2 h-2 w-2 rounded-full bg-white" />
-        </span>
-        <span className="text-2xl font-bold tracking-tight">
-          PayyOSS <span className="text-[#b8ff00]">Docs</span>
+        <Image
+          src="/logobig.png"
+          alt="PayyOSS"
+          width={1284}
+          height={430}
+          priority
+          className="h-auto w-44"
+        />
+        <span className="ml-2 border-l border-white/20 pl-2 text-lg font-semibold text-[#b8ff00]">
+          Docs
         </span>
       </Link>
 
